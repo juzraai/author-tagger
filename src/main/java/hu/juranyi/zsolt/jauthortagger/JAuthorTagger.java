@@ -33,7 +33,9 @@ import hu.juranyi.zsolt.jauthortagger.util.Log;
  * @author Zsolt
  *
  */
-public class JAuthorTagger { // TODO DOC all classes
+public class JAuthorTagger {
+	// TODO DOC all classes
+	// TODO JUnit tests
 
 	static {
 		// Log.setLogLevel(AuthorTaggerConfig.class, Log.Level.WARN);
@@ -87,6 +89,8 @@ public class JAuthorTagger { // TODO DOC all classes
 		LOG.info("Reading project configuration and tagging (in memory)");
 		new AuthorTaggerConfig(new File(projectDir, ".authors")).loadAndApply(javaFiles);
 
+		// TODO nooo, test mode should save the orig filename with .test prefix
+		// and also create backup before!
 		File outputDir = null;
 		if (test) {
 			outputDir = new File(projectDir, "authors-test");
