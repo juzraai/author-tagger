@@ -23,9 +23,11 @@ Features
 
 * easy-2-use, 1 argument CLI
 * project specific configuration via a simple, minimalistic text file
-* customizable behaviour: you can tell which classes edited by which authors, or which authors edited which classes
-* it can merge or overwrite existing author lists with new ones
-* you can tell which classes should be skipped and also there's a test drive option (no modification)
+* you can tell which classes edited by which authors, or which authors edited which classes
+* you can tell at class level whether to merge or overwrite existing author lists with new ones
+* also given classes can be skipped
+* creates backup automatically by default
+* test mode: no modification, creates new files with modified author lists instead
 
 
 
@@ -50,15 +52,22 @@ Usage
 * Write a configuration file (see below) for your project named `path/2/ur/project/.authors`
 * Run the thingy: `java -jar author-tagger.jar path/2/ur/project`
 
-**Note:** I suggest you to backup/commit your code before this procedure, just to be safe. :)
+**JAuthorTagger** will automatically create a **backup** of every file, by adding `.at-save` suffix to the original filename. If you provide "nobackup" as a 2nd command line argument:
+* no backup will be created
+* also, previous backups will be deleted
 
-Optionally you can put "test" at the end of the command, as an additional argument. This way **JAuthorTagger** will NOT modify your files, instead it will create a directory named "authors-test" inside your project and spit out the modified files there.
+The program has a **test mode** which is a twisted behaviour. If you provide "test" as the 2nd argument:
+* your original `.java` files will NOT be modified
+* new files will be created instead, with `.at-test` suffix in their filename
 
 
 
 Further ideas
 -------------
 
+* restore function
+* FileHandlingMode: GENERAL, NO_BACKUP, RESTORE, TEST
+* smarter algorithm: filename contains type name -> so we can look for declaration with type name
 * manage `package-info.java` files too
 * it will be more useful as a Maven plugin
 * and/or as an Eclipse plugin with a nice GUI

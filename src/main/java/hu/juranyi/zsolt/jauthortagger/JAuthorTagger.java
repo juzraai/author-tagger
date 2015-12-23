@@ -49,10 +49,11 @@ public class JAuthorTagger {
 	public static void main(String[] args) {
 
 		// TEST DRIVE:
-		args = "C:\\tmp\\test-project test".split(" ");
+		args = "C:\\tmp\\test-project nobackup".split(" ");
 
 		File projectDir = null;
 		boolean test = false;
+		boolean backup = true;
 		if (args.length >= 1) {
 			projectDir = new File(args[0]);
 			Log.setLogFile(new File(projectDir, ".authors-log").getAbsolutePath());
@@ -61,21 +62,34 @@ public class JAuthorTagger {
 			}
 		}
 		if (args.length >= 2) {
-			test = args[1].equalsIgnoreCase("test");
+			test = "test".equalsIgnoreCase(args[1]);
+			if ("nobackup".equalsIgnoreCase(args[1])) {
+				backup = false;
+			}
+
 		}
 		if (null == projectDir) {
-			System.out.println("Usage: <project-dir> [test]");
+			System.out.println("JAuthorTagger  by  Zsolt Juranyi");
+			System.out.println("github.com/juzraai/author-tagger");
+			System.out.println("\nUsage:\n\t<project-dir> [nobackup|test]");
+			System.out.println("\nJAuthorTagger will create backup files unless you provide the 2nd argument.");
+			System.out.println("\nWhen 'nobackup' is present, previous backup files will be deleted.");
+			System.out.println("When 'test' is present, no modification will be made to your files, new ones");
+			System.out.println("will be created instead.");
+			System.out.println("\nSee full documentation on GitHub!");
 		} else {
 			LOG = Log.forClass(JAuthorTagger.class);
-			new JAuthorTagger(projectDir, test).start();
+			new JAuthorTagger(projectDir, backup, test).start();
 		}
 	}
 
 	private final File projectDir;
+	private final boolean backup;
 	private final boolean test;
 
-	public JAuthorTagger(File projectDir, boolean test) {
+	public JAuthorTagger(File projectDir, boolean backup, boolean test) {
 		this.projectDir = projectDir;
+		this.backup = backup;
 		this.test = test;
 	}
 
@@ -89,16 +103,13 @@ public class JAuthorTagger {
 		LOG.info("Reading project configuration and tagging (in memory)");
 		new AuthorTaggerConfig(new File(projectDir, ".authors")).loadAndApply(javaFiles);
 
-		// TODO nooo, test mode should save the orig filename with .test prefix
-		// and also create backup before!
-		File outputDir = null;
 		if (test) {
-			outputDir = new File(projectDir, "authors-test");
 			LOG.info("Writing to disk (test mode)");
 		} else {
 			LOG.info("Writing to disk");
 		}
-		AuthorTagWriter w = new AuthorTagWriter(outputDir);
+		LOG.info("Writing to disk");
+		AuthorTagWriter w = new AuthorTagWriter(backup, test);
 		for (JavaFile javaFile : javaFiles) {
 			w.writeAuthorTags(javaFile);
 		}

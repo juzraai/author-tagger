@@ -35,14 +35,19 @@ import hu.juranyi.zsolt.jauthortagger.util.Log;
 public class AuthorTagWriter {
 
 	private static final Logger LOG = Log.forClass(AuthorTagWriter.class);
-	private final File outputDir;
+	private static final String BACKUP_FILE_SUFFIX = ".at-save";
+	private static final String TEMP_FILE_SUFFIX = ".at-temp";
+	private static final String TEST_FILE_SUFFIX = ".at-test";
+	private final boolean backup;
+	private final boolean test;
 
 	public AuthorTagWriter() {
-		this(null);
+		this(true, false);
 	}
 
-	public AuthorTagWriter(File outputDir) {
-		this.outputDir = outputDir;
+	public AuthorTagWriter(boolean backup, boolean test) {
+		this.backup = backup;
+		this.test = test;
 	}
 
 	public void writeAuthorTags(JavaFile javaFile) {
@@ -68,16 +73,16 @@ public class AuthorTagWriter {
 
 		// I/O init
 		File inputFile = javaFile.getFile();
-		File outputFile = javaFile.getFile();
-		File tempFile = new File("temp.java");
-		tempFile.deleteOnExit();
-		if (null != outputDir) {
-			outputFile = new File(outputDir, javaFile.getTypeName().replaceAll("\\.", "\\" + File.separator) + ".java");
-			File p = outputFile.getParentFile();
-			if (null != p && !p.exists()) {
-				p.mkdirs();
-			}
+		File testFile = new File(javaFile.getFile().getAbsolutePath() + TEST_FILE_SUFFIX);
+		if (!test) {
+			testFile.delete();
 		}
+		File outputFile = (test) ? testFile : javaFile.getFile();
+		File backupFile = new File(javaFile.getFile().getAbsolutePath() + BACKUP_FILE_SUFFIX);
+		if (!backup) {
+			backupFile.delete();
+		}
+		File tempFile = new File(javaFile.getFile().getAbsolutePath() + TEMP_FILE_SUFFIX);
 
 		// let's roll
 		Scanner s = null;
@@ -146,11 +151,16 @@ public class AuthorTagWriter {
 			if (null != w) {
 				try {
 					w.close();
-					LOG.trace("Overwriting {}", outputFile.getAbsolutePath());
+					if (!test && backup) {
+						LOG.trace("Backuping to: {}", backupFile.getAbsolutePath());
+						backupFile.delete();
+						outputFile.renameTo(backupFile);
+					}
+					LOG.trace("Writing {}", outputFile.getAbsolutePath());
 					outputFile.delete();
 					tempFile.renameTo(outputFile);
 				} catch (IOException e) {
-					LOG.error("", e);
+					LOG.error("Error when closing temp file", e);
 				}
 			}
 		}
