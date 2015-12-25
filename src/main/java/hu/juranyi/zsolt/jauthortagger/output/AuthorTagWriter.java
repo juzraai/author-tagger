@@ -28,6 +28,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 
 import hu.juranyi.zsolt.jauthortagger.model.AuthorTaggingMode;
+import hu.juranyi.zsolt.jauthortagger.model.BackupingMode;
+import hu.juranyi.zsolt.jauthortagger.model.Filenames;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFilePatterns;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
@@ -35,29 +37,46 @@ import hu.juranyi.zsolt.jauthortagger.util.Log;
 public class AuthorTagWriter {
 
 	private static final Logger LOG = Log.forClass(AuthorTagWriter.class);
-	private static final String BACKUP_FILE_SUFFIX = ".at-save";
-	private static final String TEMP_FILE_SUFFIX = ".at-temp";
-	private static final String TEST_FILE_SUFFIX = ".at-test";
-	private final boolean backup;
-	private final boolean test;
+	private final BackupingMode backupingMode;
 
-	public AuthorTagWriter() {
-		this(true, false);
-	}
-
-	public AuthorTagWriter(boolean backup, boolean test) {
-		this.backup = backup;
-		this.test = test;
+	public AuthorTagWriter(BackupingMode backupingMode) {
+		this.backupingMode = backupingMode;
 	}
 
 	public void writeAuthorTags(JavaFile javaFile) {
-		if (null == javaFile || null == javaFile.getTypeName()) {
+		if (null == javaFile || null == javaFile.getFile()) {
 			return;
 		}
 
+		// I/O init
+		File inputFile = javaFile.getFile();
+		File testFile = new File(javaFile.getFile().getAbsolutePath() + Filenames.TEST_FILE_SUFFIX);
+		File outputFile = (BackupingMode.TEST == backupingMode) ? testFile : javaFile.getFile();
+		File backupFile = new File(javaFile.getFile().getAbsolutePath() + Filenames.BACKUP_FILE_SUFFIX);
+		File tempFile = new File(javaFile.getFile().getAbsolutePath() + Filenames.TEMP_FILE_SUFFIX);
+
+		// restoring
+		if (BackupingMode.RESTORE == backupingMode) {
+			if (backupFile.exists()) {
+				outputFile.delete();
+				backupFile.renameTo(outputFile);
+			}
+			return;
+		}
+
+		// previous test files should be deleted
+		if (BackupingMode.TEST != backupingMode) {
+			testFile.delete();
+		}
+
+		// and backups is sometimes
+		if (BackupingMode.NO_BACKUP == backupingMode) {
+			backupFile.delete();
+		}
+
 		// skipping
-		if (AuthorTaggingMode.SKIP == javaFile.getTaggingMode()) {
-			LOG.info("Skipping type: {}", javaFile.getTypeName());
+		if (null == javaFile.getTypeName() || AuthorTaggingMode.SKIP == javaFile.getTaggingMode()) {
+			LOG.info("Skipping file: {}", javaFile.getFile().getAbsolutePath());
 			return;
 		}
 
@@ -70,19 +89,6 @@ public class AuthorTagWriter {
 		}
 		authorsToWrite.addAll(javaFile.getNewAuthors());
 		LOG.debug("Final author list for {} is: {}", javaFile.getTypeName(), authorsToWrite);
-
-		// I/O init
-		File inputFile = javaFile.getFile();
-		File testFile = new File(javaFile.getFile().getAbsolutePath() + TEST_FILE_SUFFIX);
-		if (!test) {
-			testFile.delete();
-		}
-		File outputFile = (test) ? testFile : javaFile.getFile();
-		File backupFile = new File(javaFile.getFile().getAbsolutePath() + BACKUP_FILE_SUFFIX);
-		if (!backup) {
-			backupFile.delete();
-		}
-		File tempFile = new File(javaFile.getFile().getAbsolutePath() + TEMP_FILE_SUFFIX);
 
 		// let's roll
 		Scanner s = null;
@@ -129,13 +135,15 @@ public class AuthorTagWriter {
 					}
 				}
 
-				// let's print the current line except its an old author tag
+				// print the current line except its an old author tag
+				// (we printed merged old authors above)
 				if (!isAuthorLine) {
 					w.write(line);
 					w.newLine();
 				}
 			}
 
+			// copy the rest of the file
 			while (s.hasNextLine()) {
 				w.write(s.nextLine());
 				w.newLine();
@@ -151,11 +159,15 @@ public class AuthorTagWriter {
 			if (null != w) {
 				try {
 					w.close();
-					if (!test && backup) {
+
+					// save backup if needed
+					if (BackupingMode.BACKUP == backupingMode) {
 						LOG.trace("Backuping to: {}", backupFile.getAbsolutePath());
 						backupFile.delete();
 						outputFile.renameTo(backupFile);
 					}
+
+					// place the file to the right place
 					LOG.trace("Writing {}", outputFile.getAbsolutePath());
 					outputFile.delete();
 					tempFile.renameTo(outputFile);

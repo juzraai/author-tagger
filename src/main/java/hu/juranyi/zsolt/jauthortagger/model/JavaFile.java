@@ -45,6 +45,7 @@ public class JavaFile {
 	private final List<String> oldAuthors = new ArrayList<String>();
 	private final List<String> newAuthors = new ArrayList<String>();
 	private int typeDeclarationStartLine = -1;
+	private DiffResult diffResult; // TODO doc
 
 	/**
 	 * Creates an instance.
@@ -55,6 +56,10 @@ public class JavaFile {
 	 */
 	public JavaFile(File file) {
 		this.file = file;
+	}
+
+	public DiffResult getDiffResult() {
+		return diffResult;
 	}
 
 	/**
@@ -117,6 +122,10 @@ public class JavaFile {
 	 */
 	public String getTypeName() {
 		return typeName;
+	}
+
+	public void setDiffResult(DiffResult diffResult) {
+		this.diffResult = diffResult;
 	}
 
 	/**

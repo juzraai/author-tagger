@@ -40,7 +40,7 @@ import hu.juranyi.zsolt.jauthortagger.util.Log;
  * @see JavaFile
  *
  */
-public class AuthorTaggerConfig { // TODO DOC: file format...
+public class AuthorTaggerConfig { // TODO DOC: config file format...
 
 	private static final Logger LOG = Log.forClass(AuthorTaggerConfig.class);
 	private static final Pattern FILTER_SECTION_HEADER_PATTERN = Pattern
@@ -139,6 +139,8 @@ public class AuthorTaggerConfig { // TODO DOC: file format...
 
 				if (fm.find()) {
 					filteredJavaFiles = filterJavaFiles(javaFiles, fm.group("f"));
+					// TODO don't we need clearAuthors here?
+					// TODO or optionally a "CLEAR" author could do it
 					author = null;
 					setTaggingMode(filteredJavaFiles, fm.group("m"));
 				} else if (am.find()) {
