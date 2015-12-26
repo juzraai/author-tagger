@@ -21,9 +21,12 @@ package hu.juranyi.zsolt.jauthortagger.model;
  * <code>.java</code> files. At least one of them should suit your needs. :)
  *
  * @author Zsolt Jurányi
- *
+ * @see #BACKUP
+ * @see #NO_BACKUP
+ * @see #RESTORE
+ * @see #TEST
  */
-public enum BackupingMode {
+public enum BackupMode {
 
 	/**
 	 * A backup will be created of every <code>.java</code> file in your

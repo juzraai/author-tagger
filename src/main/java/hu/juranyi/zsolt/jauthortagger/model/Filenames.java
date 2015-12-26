@@ -16,13 +16,43 @@
 
 package hu.juranyi.zsolt.jauthortagger.model;
 
+/**
+ * Constants of filenames, filename parts and related helper functions brought
+ * to one place.
+ *
+ * @author Zsolt Jurányi
+ *
+ */
 public class Filenames {
 
+	/**
+	 * Additional file extension for backup files.
+	 */
 	public static final String BACKUP_FILE_SUFFIX = ".at-save";
+
+	/**
+	 * Filename of the generated diff report.
+	 */
 	public static final String DIFF_REPORT_FILE = ".authors-diff-report.html";
+
+	/**
+	 * The configuration file's name.
+	 */
 	public static final String PROJECT_CONFIG_FILE = ".authors";
+
+	/**
+	 * The log file's name.
+	 */
 	public static final String PROJECT_LOG_FILE = ".authors-log";
+
+	/**
+	 * Additional file extension for temporary files.
+	 */
 	public static final String TEMP_FILE_SUFFIX = ".at-temp";
+
+	/**
+	 * Additional file extension for test files.
+	 */
 	public static final String TEST_FILE_SUFFIX = ".at-test";
 
 	// TODO helper methods to ease creating File objects

@@ -22,6 +22,7 @@ import java.util.List;
 
 import hu.juranyi.zsolt.jauthortagger.input.AuthorTaggerConfig;
 import hu.juranyi.zsolt.jauthortagger.input.JavaFileAnalyzer;
+import hu.juranyi.zsolt.jauthortagger.output.DiffReportWriter;
 
 /**
  * Model class representing a <code>.java</code> file. It stores a
@@ -29,11 +30,13 @@ import hu.juranyi.zsolt.jauthortagger.input.JavaFileAnalyzer;
  * that will be modified by the analyzer and the configuration. It will contain
  * the existing and new authors, the tagging mode and the index of the type
  * declaration's start line in the <code>.java</code> file. The default tagging
- * mode is <code>MERGE</code>.
+ * mode is <code>MERGE</code>. A calculated diff will be also stored for diff
+ * report generation.
  *
  * @author Zsolt Jurányi
  * @see AuthorTaggerConfig
  * @see AuthorTaggingMode
+ * @see DiffReportWriter
  * @see JavaFileAnalyzer
  *
  */
@@ -45,7 +48,7 @@ public class JavaFile {
 	private final List<String> oldAuthors = new ArrayList<String>();
 	private final List<String> newAuthors = new ArrayList<String>();
 	private int typeDeclarationStartLine = -1;
-	private DiffResult diffResult; // TODO doc
+	private DiffResult diffResult;
 
 	/**
 	 * Creates an instance.
@@ -58,6 +61,12 @@ public class JavaFile {
 		this.file = file;
 	}
 
+	/**
+	 * Returns the diff result.
+	 *
+	 * @return The diff result.
+	 * @see DiffResult
+	 */
 	public DiffResult getDiffResult() {
 		return diffResult;
 	}
@@ -124,6 +133,13 @@ public class JavaFile {
 		return typeName;
 	}
 
+	/**
+	 * Sets the diff result.
+	 * 
+	 * @param diffResult
+	 *            The diff result.
+	 * @see DiffResult
+	 */
 	public void setDiffResult(DiffResult diffResult) {
 		this.diffResult = diffResult;
 	}

@@ -15,7 +15,8 @@
  */
 
 /**
- * This package contains the classes that load and process input files.
+ * This package contains the classes that enumerate, read and process input
+ * files.
  *
  * @author Zsolt Jurányi
  */

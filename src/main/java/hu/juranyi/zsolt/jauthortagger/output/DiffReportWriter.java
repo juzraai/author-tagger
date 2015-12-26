@@ -28,7 +28,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.slf4j.Logger;
 
-import hu.juranyi.zsolt.jauthortagger.model.BackupingMode;
+import hu.juranyi.zsolt.jauthortagger.model.BackupMode;
 import hu.juranyi.zsolt.jauthortagger.model.Filenames;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
@@ -44,17 +44,17 @@ public class DiffReportWriter {
 	}
 
 	private final File projectDir;
-	private final BackupingMode backupingMode;
+	private final BackupMode backupMode;
 	private final List<JavaFile> javaFiles;
 
-	public DiffReportWriter(File projectDir, BackupingMode backupingMode, List<JavaFile> javaFiles) {
+	public DiffReportWriter(File projectDir, BackupMode backupMode, List<JavaFile> javaFiles) {
 		this.projectDir = projectDir;
-		this.backupingMode = backupingMode;
+		this.backupMode = backupMode;
 		this.javaFiles = javaFiles;
 	}
 
-	public BackupingMode getBackupingMode() {
-		return backupingMode;
+	public BackupMode getBackupMode() {
+		return backupMode;
 	}
 
 	public List<JavaFile> getJavaFiles() {
@@ -71,7 +71,7 @@ public class DiffReportWriter {
 		VelocityContext vc = new VelocityContext();
 		vc.put("timestamp", new SimpleDateFormat("yyyy-MM-dd @ HH:mm.ss").format(new Date()));
 		vc.put("projectDir", projectDir.getAbsolutePath());
-		vc.put("backupingMode", backupingMode);
+		vc.put("backupMode", backupMode);
 		vc.put("javaFiles", javaFiles);
 
 		// TODO unifiedDiff lines should be HTML encoded

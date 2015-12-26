@@ -20,20 +20,46 @@ import java.util.List;
 
 import difflib.Patch;
 
+/**
+ * A simple POJO to store the calculated diff result of the original and
+ * modified <code>.java</code> files. It is needed to generate a diff report to
+ * the user.
+ *
+ * @author Zsolt Jurányi
+ *
+ */
 public class DiffResult {
 
 	private final Patch<String> patch;
 	private final List<String> unifiedDiff;
 
+	/**
+	 * Creates an instance.
+	 *
+	 * @param patch
+	 *            A <code>difflib.Patch</code> object which stores deltas.
+	 * @param unifiedDiff
+	 *            Lines of a unified diff generated from the patch.
+	 */
 	public DiffResult(Patch<String> patch, List<String> unifiedDiff) {
 		this.patch = patch;
 		this.unifiedDiff = unifiedDiff;
 	}
 
+	/**
+	 * Returns the <code>difflib.Patch</code> object which stores deltas.
+	 *
+	 * @return The <code>difflib.Patch</code> object which stores deltas.
+	 */
 	public Patch<String> getPatch() {
 		return patch;
 	}
 
+	/**
+	 * Returns the lines of the unified diff generated from the patch.
+	 *
+	 * @return The lines of the unified diff generated from the patch.
+	 */
 	public List<String> getUnifiedDiff() {
 		return unifiedDiff;
 	}

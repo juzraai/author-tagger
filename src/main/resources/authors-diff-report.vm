@@ -20,7 +20,7 @@
 			<p class="lead">
 				<span class="glyphicon glyphicon-time"></span>&nbsp;&nbsp;$timestamp
 				&nbsp;&nbsp;
-				<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;$backupingMode
+				<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;$backupMode
 				&nbsp;&nbsp;
 				<span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;$projectDir
 			</p>
@@ -42,23 +42,23 @@
 					<div class="col-md-10 col-md-offset-1">
 						<p>
 							<span class="glyphicon glyphicon-file"></span>
-							$fn#if("BACKUP" == $backupingMode).at-save#end
-							#if ("BACKUP" == $backupingMode)
+							$fn#if("BACKUP" == $backupMode).at-save#end
+							#if ("BACKUP" == $backupMode)
 								<span class="label label-info">backup</span>
-							#elseif ("NO_BACKUP" == $backupingMode)
+							#elseif ("NO_BACKUP" == $backupMode)
 								<span class="label label-danger">before overwrite</span>
-							#elseif ("TEST" == $backupingMode)
+							#elseif ("TEST" == $backupMode)
 								<span class="label label-info">not modified</span>								
 							#end
 							<br/>
 							
 							<span class="glyphicon glyphicon-file"></span>
-							$fn#if("TEST" == $backupingMode).at-test#end
-							#if ("BACKUP" == $backupingMode)
+							$fn#if("TEST" == $backupMode).at-test#end
+							#if ("BACKUP" == $backupMode)
 								<span class="label label-success">modified</span>
-							#elseif ("NO_BACKUP" == $backupingMode)
+							#elseif ("NO_BACKUP" == $backupMode)
 								<span class="label label-success">modified</span>
-							#elseif ("TEST" == $backupingMode)
+							#elseif ("TEST" == $backupMode)
 								<span class="label label-info">new file</span>								
 							#end
 						</p>

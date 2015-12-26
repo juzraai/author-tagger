@@ -60,13 +60,15 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 	}
 
 	/**
-	 * Adds a new author to the given <code>JavaFile</code> objects.
+	 * Adds a new author to the given <code>JavaFile</code> objects. Called by
+	 * <code>loadAndApply</code>.
 	 *
 	 * @param filteredJavaFiles
 	 *            List of <code>JavaFile</code> objects to be be modified.
 	 * @param author
 	 *            The new author to be added to the <code>JavaFile</code>
 	 *            objects.
+	 * @see #loadAndApply(List)
 	 * @see JavaFile
 	 */
 	protected void addAuthor(List<JavaFile> filteredJavaFiles, String author) {
@@ -81,7 +83,8 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 	 * Filters the given <code>JavaFile</code> objects with the given filter
 	 * <code>String</code>. The filter will be converted into a regular
 	 * expression using <code>ClassNameFilter</code>. <code>JavaFiles</code>
-	 * will be filtered by their <code>typeName</code> field.
+	 * will be filtered by their <code>typeName</code> field. Called by
+	 * <code>loadAndApply</code>.
 	 *
 	 * @param javaFiles
 	 *            The <code>JavaFile</code> objects to be filtered.
@@ -89,6 +92,7 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 	 *            The filter <code>String</code> to use.
 	 * @return A new list containing <code>JavaFile</code> objects accepted by
 	 *         the filter.
+	 * @see #loadAndApply(List)
 	 * @see ClassNameFilter
 	 * @see JavaFile
 	 */
@@ -125,6 +129,9 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 	 *
 	 * @param javaFiles
 	 *            List of <code>JavaFile</code> objects to be modified.
+	 * @see AuthorTaggingMode
+	 * @see ClassNameFilter
+	 * @see JavaFile
 	 */
 	public void loadAndApply(List<JavaFile> javaFiles) {
 		Scanner s = null;
@@ -139,8 +146,6 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 
 				if (fm.find()) {
 					filteredJavaFiles = filterJavaFiles(javaFiles, fm.group("f"));
-					// TODO don't we need clearAuthors here?
-					// TODO or optionally a "CLEAR" author could do it
 					author = null;
 					setTaggingMode(filteredJavaFiles, fm.group("m"));
 				} else if (am.find()) {
@@ -163,19 +168,10 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 			}
 		}
 	}
-	/**
-	 * Adds a new author to the given <code>JavaFile</code> objects.
-	 *
-	 * @param filteredJavaFiles
-	 *            List of <code>JavaFile</code> objects to be be modified.
-	 * @param author
-	 *            The new author to be added to the <code>JavaFile</code>
-	 *            objects.
-	 * @see JavaFile
-	 */
 
 	/**
-	 * Sets the tagging mode in the given <code>JavaFile</code> objects.
+	 * Sets the tagging mode in the given <code>JavaFile</code> objects. Called
+	 * by <code>loadAndApply</code>.
 	 *
 	 * @param filteredJavaFiles
 	 *            List of <code>JavaFile</code> objects to be be modified.
@@ -184,12 +180,18 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 	 *            of these values: <code>"MERGE"</code>,
 	 *            <code>"OVERWRITE"</code>, <code>"SKIP"</code>. If it's
 	 *            <code>null</code> or unrecognizable, nothing will be modified.
+	 * @see #loadAndApply(List)
+	 * @see AuthorTaggingMode
 	 * @see JavaFile
 	 */
 	protected void setTaggingMode(List<JavaFile> filteredJavaFiles, String modeString) {
-		if (null != modeString) {
-			AuthorTaggingMode taggingMode = AuthorTaggingMode.valueOf(modeString.toUpperCase());
-			// TODO handle exception when invalid mode comes
+		AuthorTaggingMode taggingMode = null;
+		try {
+			taggingMode = AuthorTaggingMode.valueOf(modeString.toUpperCase());
+		} catch (Exception e) {
+			LOG.warn("Invalid tagging mode: {}", modeString);
+		}
+		if (null != taggingMode) {
 			LOG.debug("Setting tagging mode to {} for {} .java files", taggingMode, filteredJavaFiles.size());
 			for (JavaFile javaFile : filteredJavaFiles) {
 				LOG.trace("{} :: {}", taggingMode, javaFile.getTypeName());

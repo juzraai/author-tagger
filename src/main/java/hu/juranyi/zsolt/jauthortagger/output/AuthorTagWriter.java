@@ -27,22 +27,57 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 
+import hu.juranyi.zsolt.jauthortagger.input.JavaFileAnalyzer;
 import hu.juranyi.zsolt.jauthortagger.model.AuthorTaggingMode;
-import hu.juranyi.zsolt.jauthortagger.model.BackupingMode;
+import hu.juranyi.zsolt.jauthortagger.model.BackupMode;
 import hu.juranyi.zsolt.jauthortagger.model.Filenames;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFilePatterns;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
 
+/**
+ * This class does the real magic: the inejcting of <code>@author</code> tags
+ * based on the information in the given <code>JavaFile</code> object, and
+ * handling file backups according to the given <code>BackupMode</code> value.
+ *
+ * @author Zsolt Jurányi
+ * @see BackupMode
+ * @see JavaFile
+ */
 public class AuthorTagWriter {
 
 	private static final Logger LOG = Log.forClass(AuthorTagWriter.class);
-	private final BackupingMode backupingMode;
+	private final BackupMode backupMode;
 
-	public AuthorTagWriter(BackupingMode backupingMode) {
-		this.backupingMode = backupingMode;
+	/**
+	 * Creates an instance.
+	 *
+	 * @param backupMode
+	 *            The <code>BackupMode</code> object.
+	 * @see BackupMode
+	 */
+	public AuthorTagWriter(BackupMode backupMode) {
+		this.backupMode = backupMode;
 	}
 
+	/**
+	 * Injects the <code>@author</code> tags into the <code>.java</code> file,
+	 * and the <code>RESTORE</code> mode is also handled here. See
+	 * <code>BackupMode</code>'s documentation for information about file
+	 * handling. The algorithm is really simple (see
+	 * <code>JavaFileAnalyzer</code>'s doc for limitations), but it guarantees
+	 * that only the <code>@author</code> tags will be modified in every file.
+	 * Firstly it copies the first part of your file till the type declaration,
+	 * and during that the authors will be merged/overwritten. Secondly it
+	 * copies the rest of your file. The copying is done to a temporary file and
+	 * then it renamed to the appropriate filename based on the given backup
+	 * mode.
+	 *
+	 * @param javaFile
+	 * @see BackupMode
+	 * @see JavaFile
+	 * @see JavaFileAnalyzer#analyzeJavaFile(JavaFile)
+	 */
 	public void writeAuthorTags(JavaFile javaFile) {
 		if (null == javaFile || null == javaFile.getFile()) {
 			return;
@@ -51,12 +86,12 @@ public class AuthorTagWriter {
 		// I/O init
 		File inputFile = javaFile.getFile();
 		File testFile = new File(javaFile.getFile().getAbsolutePath() + Filenames.TEST_FILE_SUFFIX);
-		File outputFile = (BackupingMode.TEST == backupingMode) ? testFile : javaFile.getFile();
+		File outputFile = (BackupMode.TEST == backupMode) ? testFile : javaFile.getFile();
 		File backupFile = new File(javaFile.getFile().getAbsolutePath() + Filenames.BACKUP_FILE_SUFFIX);
 		File tempFile = new File(javaFile.getFile().getAbsolutePath() + Filenames.TEMP_FILE_SUFFIX);
 
 		// restoring
-		if (BackupingMode.RESTORE == backupingMode) {
+		if (BackupMode.RESTORE == backupMode) {
 			if (backupFile.exists()) {
 				outputFile.delete();
 				backupFile.renameTo(outputFile);
@@ -65,12 +100,12 @@ public class AuthorTagWriter {
 		}
 
 		// previous test files should be deleted
-		if (BackupingMode.TEST != backupingMode) {
+		if (BackupMode.TEST != backupMode) {
 			testFile.delete();
 		}
 
 		// and backups is sometimes
-		if (BackupingMode.NO_BACKUP == backupingMode) {
+		if (BackupMode.NO_BACKUP == backupMode) {
 			backupFile.delete();
 		}
 
@@ -161,7 +196,7 @@ public class AuthorTagWriter {
 					w.close();
 
 					// save backup if needed
-					if (BackupingMode.BACKUP == backupingMode) {
+					if (BackupMode.BACKUP == backupMode) {
 						LOG.trace("Backuping to: {}", backupFile.getAbsolutePath());
 						backupFile.delete();
 						outputFile.renameTo(backupFile);
