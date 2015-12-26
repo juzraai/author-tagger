@@ -16,6 +16,8 @@
 
 package hu.juranyi.zsolt.jauthortagger.model;
 
+import static hu.juranyi.zsolt.jauthortagger.model.AuthorTaggingMode.MERGE;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +46,7 @@ public class JavaFile {
 
 	private final File file;
 	private String typeName;
-	private AuthorTaggingMode taggingMode = AuthorTaggingMode.MERGE;
+	private AuthorTaggingMode taggingMode = MERGE;
 	private final List<String> oldAuthors = new ArrayList<String>();
 	private final List<String> newAuthors = new ArrayList<String>();
 	private int typeDeclarationStartLine = -1;
@@ -135,7 +137,7 @@ public class JavaFile {
 
 	/**
 	 * Sets the diff result.
-	 * 
+	 *
 	 * @param diffResult
 	 *            The diff result.
 	 * @see DiffResult

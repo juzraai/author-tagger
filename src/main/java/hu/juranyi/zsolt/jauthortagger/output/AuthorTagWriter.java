@@ -16,6 +16,16 @@
 
 package hu.juranyi.zsolt.jauthortagger.output;
 
+import static hu.juranyi.zsolt.jauthortagger.model.AuthorTaggingMode.MERGE;
+import static hu.juranyi.zsolt.jauthortagger.model.AuthorTaggingMode.SKIP;
+import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.BACKUP;
+import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.NO_BACKUP;
+import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.RESTORE;
+import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.TEST;
+import static hu.juranyi.zsolt.jauthortagger.model.Filenames.backupFileOf;
+import static hu.juranyi.zsolt.jauthortagger.model.Filenames.tempFileOf;
+import static hu.juranyi.zsolt.jauthortagger.model.Filenames.testFileOf;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,9 +38,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 
 import hu.juranyi.zsolt.jauthortagger.input.JavaFileAnalyzer;
-import hu.juranyi.zsolt.jauthortagger.model.AuthorTaggingMode;
 import hu.juranyi.zsolt.jauthortagger.model.BackupMode;
-import hu.juranyi.zsolt.jauthortagger.model.Filenames;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFilePatterns;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
@@ -85,13 +93,13 @@ public class AuthorTagWriter {
 
 		// I/O init
 		File inputFile = javaFile.getFile();
-		File testFile = new File(javaFile.getFile().getAbsolutePath() + Filenames.TEST_FILE_SUFFIX);
-		File outputFile = (BackupMode.TEST == backupMode) ? testFile : javaFile.getFile();
-		File backupFile = new File(javaFile.getFile().getAbsolutePath() + Filenames.BACKUP_FILE_SUFFIX);
-		File tempFile = new File(javaFile.getFile().getAbsolutePath() + Filenames.TEMP_FILE_SUFFIX);
+		File testFile = testFileOf(javaFile.getFile());
+		File outputFile = (TEST == backupMode) ? testFile : javaFile.getFile();
+		File backupFile = backupFileOf(javaFile.getFile());
+		File tempFile = tempFileOf(javaFile.getFile());
 
 		// restoring
-		if (BackupMode.RESTORE == backupMode) {
+		if (RESTORE == backupMode) {
 			if (backupFile.exists()) {
 				outputFile.delete();
 				backupFile.renameTo(outputFile);
@@ -100,17 +108,17 @@ public class AuthorTagWriter {
 		}
 
 		// previous test files should be deleted
-		if (BackupMode.TEST != backupMode) {
+		if (TEST != backupMode) {
 			testFile.delete();
 		}
 
 		// and backups is sometimes
-		if (BackupMode.NO_BACKUP == backupMode) {
+		if (NO_BACKUP == backupMode) {
 			backupFile.delete();
 		}
 
 		// skipping
-		if (null == javaFile.getTypeName() || AuthorTaggingMode.SKIP == javaFile.getTaggingMode()) {
+		if (null == javaFile.getTypeName() || SKIP == javaFile.getTaggingMode()) {
 			LOG.info("Skipping file: {}", javaFile.getFile().getAbsolutePath());
 			return;
 		}
@@ -119,7 +127,7 @@ public class AuthorTagWriter {
 
 		// build up final author list
 		Set<String> authorsToWrite = new LinkedHashSet<String>();
-		if (AuthorTaggingMode.MERGE == javaFile.getTaggingMode()) {
+		if (MERGE == javaFile.getTaggingMode()) {
 			authorsToWrite.addAll(javaFile.getOldAuthors());
 		}
 		authorsToWrite.addAll(javaFile.getNewAuthors());
@@ -196,7 +204,7 @@ public class AuthorTagWriter {
 					w.close();
 
 					// save backup if needed
-					if (BackupMode.BACKUP == backupMode) {
+					if (BACKUP == backupMode) {
 						LOG.trace("Backuping to: {}", backupFile.getAbsolutePath());
 						backupFile.delete();
 						outputFile.renameTo(backupFile);

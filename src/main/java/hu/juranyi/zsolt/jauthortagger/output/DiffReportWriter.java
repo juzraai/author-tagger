@@ -16,6 +16,8 @@
 
 package hu.juranyi.zsolt.jauthortagger.output;
 
+import static hu.juranyi.zsolt.jauthortagger.model.Filenames.diffReportOf;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,7 +31,6 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.slf4j.Logger;
 
 import hu.juranyi.zsolt.jauthortagger.model.BackupMode;
-import hu.juranyi.zsolt.jauthortagger.model.Filenames;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
 
@@ -66,15 +67,13 @@ public class DiffReportWriter {
 	}
 
 	public void writeDiffReport() {
-		File outputFile = new File(projectDir, Filenames.DIFF_REPORT_FILE);
+		File outputFile = diffReportOf(projectDir);
 
 		VelocityContext vc = new VelocityContext();
 		vc.put("timestamp", new SimpleDateFormat("yyyy-MM-dd @ HH:mm.ss").format(new Date()));
 		vc.put("projectDir", projectDir.getAbsolutePath());
 		vc.put("backupMode", backupMode);
 		vc.put("javaFiles", javaFiles);
-
-		// TODO unifiedDiff lines should be HTML encoded
 
 		FileWriter w = null;
 		try {

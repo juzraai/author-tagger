@@ -16,6 +16,15 @@
 
 package hu.juranyi.zsolt.jauthortagger;
 
+import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.BACKUP;
+import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.NO_BACKUP;
+import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.RESTORE;
+import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.TEST;
+import static hu.juranyi.zsolt.jauthortagger.model.Filenames.backupFileOf;
+import static hu.juranyi.zsolt.jauthortagger.model.Filenames.configFileOf;
+import static hu.juranyi.zsolt.jauthortagger.model.Filenames.logFileOf;
+import static hu.juranyi.zsolt.jauthortagger.model.Filenames.testFileOf;
+
 import java.io.File;
 import java.util.List;
 
@@ -25,7 +34,6 @@ import hu.juranyi.zsolt.jauthortagger.input.AuthorTaggerConfig;
 import hu.juranyi.zsolt.jauthortagger.input.JavaFileAnalyzer;
 import hu.juranyi.zsolt.jauthortagger.input.JavaFileEnumerator;
 import hu.juranyi.zsolt.jauthortagger.model.BackupMode;
-import hu.juranyi.zsolt.jauthortagger.model.Filenames;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
 import hu.juranyi.zsolt.jauthortagger.output.AuthorTagWriter;
 import hu.juranyi.zsolt.jauthortagger.output.DiffReportWriter;
@@ -50,7 +58,7 @@ public class JAuthorTagger {
 	}
 
 	private static Logger LOG;
-	private static BackupMode DEFAULT_BACKUPING_MODE = BackupMode.BACKUP;
+	private static BackupMode DEFAULT_BACKUPING_MODE = BACKUP;
 
 	public static void main(String[] args) {
 		File projectDir = null;
@@ -67,11 +75,11 @@ public class JAuthorTagger {
 		// receive backuping mode as 2nd arg
 		if (args.length >= 2) {
 			if ("nobackup".equalsIgnoreCase(args[1])) {
-				backupMode = BackupMode.NO_BACKUP;
+				backupMode = NO_BACKUP;
 			} else if ("restore".equalsIgnoreCase(args[1])) {
-				backupMode = BackupMode.RESTORE;
+				backupMode = RESTORE;
 			} else if ("test".equalsIgnoreCase(args[1])) {
-				backupMode = BackupMode.TEST;
+				backupMode = TEST;
 			}
 		}
 
@@ -89,7 +97,7 @@ public class JAuthorTagger {
 		} else {
 
 			// init log here because log file will be project specific
-			Log.setLogFile(new File(projectDir, Filenames.PROJECT_LOG_FILE).getAbsolutePath());
+			Log.setLogFile(logFileOf(projectDir).getAbsolutePath());
 			LOG = Log.forClass(JAuthorTagger.class);
 
 			// do the magic
@@ -126,12 +134,12 @@ public class JAuthorTagger {
 		LOG.info("Enumerating .java files in project directory: {}", projectDir.getAbsolutePath());
 		List<JavaFile> javaFiles = new JavaFileEnumerator().enumerateJavaFiles(new File(projectDir, "src"));
 
-		if (BackupMode.RESTORE != backupMode) {
+		if (RESTORE != backupMode) {
 			LOG.info("Analyzing {} .java files", javaFiles.size());
 			new JavaFileAnalyzer().analyzeJavaFiles(javaFiles);
 
 			LOG.info("Reading project configuration and tagging (in memory)");
-			new AuthorTaggerConfig(new File(projectDir, Filenames.PROJECT_CONFIG_FILE)).loadAndApply(javaFiles);
+			new AuthorTaggerConfig(configFileOf(projectDir)).loadAndApply(javaFiles);
 
 			LOG.info("Writing to disk");
 		} else {
@@ -148,17 +156,14 @@ public class JAuthorTagger {
 			w.writeAuthorTags(javaFile);
 
 			// read output and calculate diff
-			File originalFile = (BackupMode.BACKUP == backupMode)
-					? new File(javaFile.getFile().getAbsolutePath() + Filenames.BACKUP_FILE_SUFFIX)
-					: javaFile.getFile();
-			File modifiedFile = (BackupMode.TEST == backupMode)
-					? new File(javaFile.getFile().getAbsolutePath() + Filenames.TEST_FILE_SUFFIX) : javaFile.getFile();
+			File originalFile = (BACKUP == backupMode) ? backupFileOf(javaFile.getFile()) : javaFile.getFile();
+			File modifiedFile = (TEST == backupMode) ? testFileOf(javaFile.getFile()) : javaFile.getFile();
 			List<String> modifiedContent = IOUtils.fileToStringList(modifiedFile);
 			DiffCalculator dc = new DiffCalculator(originalFile, modifiedFile, originalContent, modifiedContent);
 			javaFile.setDiffResult(dc.calculateDiff());
 		}
 
-		if (BackupMode.RESTORE != backupMode) {
+		if (RESTORE != backupMode) {
 			LOG.info("Generating diff report");
 			new DiffReportWriter(projectDir, backupMode, javaFiles).writeDiffReport();
 		}

@@ -16,6 +16,8 @@
 
 package hu.juranyi.zsolt.jauthortagger.model;
 
+import java.io.File;
+
 /**
  * Constants of filenames, filename parts and related helper functions brought
  * to one place.
@@ -28,32 +30,56 @@ public class Filenames {
 	/**
 	 * Additional file extension for backup files.
 	 */
-	public static final String BACKUP_FILE_SUFFIX = ".at-save";
+	private static final String BACKUP_FILE_SUFFIX = ".at-save";
 
 	/**
 	 * Filename of the generated diff report.
 	 */
-	public static final String DIFF_REPORT_FILE = ".authors-diff-report.html";
+	private static final String DIFF_REPORT_FILE = ".authors-diff-report.html";
 
 	/**
 	 * The configuration file's name.
 	 */
-	public static final String PROJECT_CONFIG_FILE = ".authors";
+	private static final String PROJECT_CONFIG_FILE = ".authors";
 
 	/**
 	 * The log file's name.
 	 */
-	public static final String PROJECT_LOG_FILE = ".authors-log";
+	private static final String PROJECT_LOG_FILE = ".authors-log";
 
 	/**
 	 * Additional file extension for temporary files.
 	 */
-	public static final String TEMP_FILE_SUFFIX = ".at-temp";
+	private static final String TEMP_FILE_SUFFIX = ".at-temp";
 
 	/**
 	 * Additional file extension for test files.
 	 */
-	public static final String TEST_FILE_SUFFIX = ".at-test";
+	private static final String TEST_FILE_SUFFIX = ".at-test";
 
-	// TODO helper methods to ease creating File objects
+	// TODO doc
+
+	public static File backupFileOf(File javaFile) {
+		return new File(javaFile.getAbsolutePath() + BACKUP_FILE_SUFFIX);
+	}
+
+	public static File configFileOf(File projectDir) {
+		return new File(projectDir, PROJECT_CONFIG_FILE);
+	}
+
+	public static File diffReportOf(File projectDir) {
+		return new File(projectDir, DIFF_REPORT_FILE);
+	}
+
+	public static File logFileOf(File projectDir) {
+		return new File(projectDir, PROJECT_LOG_FILE);
+	}
+
+	public static File tempFileOf(File javaFile) {
+		return new File(javaFile.getAbsolutePath() + TEMP_FILE_SUFFIX);
+	}
+
+	public static File testFileOf(File javaFile) {
+		return new File(javaFile.getAbsolutePath() + TEST_FILE_SUFFIX);
+	}
 }
