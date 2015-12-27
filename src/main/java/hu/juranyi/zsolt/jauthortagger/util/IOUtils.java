@@ -26,14 +26,18 @@ public class IOUtils {
 	public static List<String> fileToStringList(File f) {
 		List<String> lines = new ArrayList<String>();
 		if (null != f && f.exists() && f.isFile()) {
+			Scanner s = null;
 			try {
-				Scanner s = new Scanner(f, "UTF-8");
+				s = new Scanner(f, "UTF-8");
 				while (s.hasNextLine()) {
 					lines.add(s.nextLine());
 				}
-				s.close();
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				if (null != s) {
+					s.close();
+				}
 			}
 		}
 		return lines;
