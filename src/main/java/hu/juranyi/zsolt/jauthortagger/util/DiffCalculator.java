@@ -17,22 +17,43 @@
 package hu.juranyi.zsolt.jauthortagger.util;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import difflib.DiffUtils;
 import difflib.Patch;
 import hu.juranyi.zsolt.jauthortagger.model.DiffResult;
+import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
 
+/**
+ * This class is used to calculate diff between the <code>.java</code> file's
+ * original and modified versions. It uses the <i>Java DiffUtils</i> library and
+ * produces <code>DiffResult</code> object to be stored in a
+ * <code>JavaFile</code>, which contains the <code>Patch</code> object and the
+ * unified diff as well.
+ *
+ * @author Zsolt Jurányi
+ * @see DiffResult
+ * @see JavaFile
+ */
 public class DiffCalculator {
 
-	private File originalFile;
-	private File modifiedFile;
-	private List<String> originalContent;
-	private List<String> modifiedContent;
-	private Patch<String> patch;
-	private final List<String> unifiedDiff = new ArrayList<String>();
+	private final File originalFile;
+	private final File modifiedFile;
+	private final List<String> originalContent;
+	private final List<String> modifiedContent;
 
+	/**
+	 * Creates an instance.
+	 *
+	 * @param originalFile
+	 *            The original file's name to use in the unified diff.
+	 * @param modifiedFile
+	 *            The modified file's name to use in the unified diff.
+	 * @param originalContent
+	 *            Lines of the original content.
+	 * @param modifiedContent
+	 *            Lines of the modified content.
+	 */
 	public DiffCalculator(File originalFile, File modifiedFile, List<String> originalContent,
 			List<String> modifiedContent) {
 		this.originalFile = originalFile;
@@ -41,57 +62,55 @@ public class DiffCalculator {
 		this.modifiedContent = modifiedContent;
 	}
 
+	/**
+	 * Calculates the diff and stores <code>difflib.Patch</code> object and
+	 * lines of the unified diff in a <code>DiffResult</code> object.
+	 *
+	 * @return A <code>DiffResult</code> object containing a
+	 *         <code>difflib.Patch</code> object and lines of the unified diff.
+	 */
 	public DiffResult calculateDiff() {
-		this.patch = DiffUtils.diff(originalContent, modifiedContent);
-		this.unifiedDiff.clear();
-		this.unifiedDiff.addAll(DiffUtils.generateUnifiedDiff(originalFile.getName(), modifiedFile.getName(),
-				originalContent, patch, 3));
+		Patch<String> patch = DiffUtils.diff(originalContent, modifiedContent);
+		List<String> unifiedDiff = DiffUtils.generateUnifiedDiff(originalFile.getName(), modifiedFile.getName(),
+				originalContent, patch, 3);
 		return new DiffResult(patch, unifiedDiff);
 
 	}
 
+	/**
+	 * Returns the lines of the modified content.
+	 *
+	 * @return The lines of the modified content.
+	 */
 	public List<String> getModifiedContent() {
 		return modifiedContent;
 	}
 
+	/**
+	 * Returns the modified file's name as a <code>File</code> object.
+	 *
+	 * @return The modified file's name as a <code>File</code> object.
+	 */
 	public File getModifiedFile() {
 		return modifiedFile;
 	}
 
+	/**
+	 * Returns the lines of the original content.
+	 *
+	 * @return The lines of the original content.
+	 */
 	public List<String> getOriginalContent() {
 		return originalContent;
 	}
 
+	/**
+	 * Returns the original file's name as a <code>File</code> object.
+	 *
+	 * @return The original file's name as a <code>File</code> object.
+	 */
 	public File getOriginalFile() {
 		return originalFile;
-	}
-
-	public Patch<String> getPatch() {
-		return patch;
-	}
-
-	public List<String> getUnifiedDiff() {
-		return unifiedDiff;
-	}
-
-	public void setModifiedContent(List<String> modifiedContent) {
-		this.modifiedContent = modifiedContent;
-	}
-
-	public void setModifiedFile(File modifiedFile) {
-		this.modifiedFile = modifiedFile;
-	}
-
-	public void setOriginalContent(List<String> originalContent) {
-		this.originalContent = originalContent;
-	}
-
-	public void setOriginalFile(File originalFile) {
-		this.originalFile = originalFile;
-	}
-
-	public void setPatch(Patch<String> patch) {
-		this.patch = patch;
 	}
 
 }

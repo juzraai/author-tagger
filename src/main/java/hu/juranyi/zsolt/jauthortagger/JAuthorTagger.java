@@ -42,13 +42,13 @@ import hu.juranyi.zsolt.jauthortagger.util.IOUtils;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
 
 /**
+ * The main class of <b>JAuthorTagger</b>. This contains the simple CLI and the
+ * main script.
  *
- * @author Zsolt
+ * @author Zsolt Jurányi
  *
  */
 public class JAuthorTagger {
-	// TODO DOC all classes
-	// TODO JUnit tests
 
 	static {
 		// Log.setLogLevel(AuthorTaggerConfig.class, Log.Level.WARN);
@@ -60,6 +60,17 @@ public class JAuthorTagger {
 	private static Logger LOG;
 	private static BackupMode DEFAULT_BACKUPING_MODE = BACKUP;
 
+	/**
+	 * Implements CLI and when appropriate parameters are received, creates an
+	 * instance of <code>JAuthorTagger</code> and calls its <code>start()</code>
+	 * method. The first argument must be the path of the project to work on,
+	 * the second optional argument can override the default backup mode.
+	 *
+	 * @param args
+	 *            Command line arguments.
+	 * @see BackupMode
+	 * @see #start()
+	 */
 	public static void main(String[] args) {
 		File projectDir = null;
 		BackupMode backupMode = DEFAULT_BACKUPING_MODE;
@@ -108,10 +119,25 @@ public class JAuthorTagger {
 	private final File projectDir;
 	private final BackupMode backupMode;
 
+	/**
+	 * Creates an instance.
+	 *
+	 * @param projectDir
+	 *            The directory of the project to work on.
+	 */
 	public JAuthorTagger(File projectDir) {
 		this(projectDir, DEFAULT_BACKUPING_MODE);
 	}
 
+	/**
+	 * Creates an instance.
+	 *
+	 * @param projectDir
+	 *            The directory of the project to work on.
+	 * @param backupMode
+	 *            The backup mode.
+	 * @see BackupMode
+	 */
 	public JAuthorTagger(File projectDir, BackupMode backupMode) {
 		this.projectDir = projectDir;
 		this.backupMode = backupMode;
@@ -120,14 +146,40 @@ public class JAuthorTagger {
 		}
 	}
 
+	/**
+	 * Returns the backup mode.
+	 *
+	 * @return The backup mode.
+	 */
 	public BackupMode getBackupMode() {
 		return backupMode;
 	}
 
+	/**
+	 * Returns the project directory.
+	 *
+	 * @return The project directory.
+	 */
 	public File getProjectDir() {
 		return projectDir;
 	}
 
+	/**
+	 * The main program. First, it enumerates <code>.java</code> files in the
+	 * given project directory. Secondly - if backup mode is not
+	 * <code>RESTORE</code>, analyzes the files by parsing existing author tags,
+	 * then loads and applies the configuration on them. After that, it calls
+	 * the tagger magic to inject new authors (or restore backups), and
+	 * calculates diff on-the-fly. Finally it exports the diff report.
+	 *
+	 * @see BackupMode
+	 * @see JavaFile
+	 * @see JavaFileEnumerator
+	 * @see JavaFileAnalyzer
+	 * @see AuthorTaggerConfig
+	 * @see DiffCalculator
+	 * @see DiffReportWriter
+	 */
 	public void start() {
 		LOG.info("JAuthorTagger running in {} mode", backupMode);
 

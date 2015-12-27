@@ -20,6 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.SimpleLogger;
 
+/**
+ * Small utility class to use <i>SLF4J's Simple Logger</i>.
+ * 
+ * @author Zsolt Jurányi
+ *
+ */
 public class Log {
 
 	public enum Level {

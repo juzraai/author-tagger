@@ -21,8 +21,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Store of I/O related methods.
+ *
+ * @author Zsolt Jurányi
+ *
+ */
 public class IOUtils {
 
+	/**
+	 * Reads an UTF-8 encoded text file and returns its lines as list of
+	 * <code>String</code> objects.
+	 * 
+	 * @param f
+	 *            The file to read.
+	 * @return The list of lines.
+	 */
 	public static List<String> fileToStringList(File f) {
 		List<String> lines = new ArrayList<String>();
 		if (null != f && f.exists() && f.isFile()) {
