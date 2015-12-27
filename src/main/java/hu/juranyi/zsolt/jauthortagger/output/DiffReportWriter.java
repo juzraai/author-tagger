@@ -16,6 +16,7 @@
 
 package hu.juranyi.zsolt.jauthortagger.output;
 
+import static hu.juranyi.zsolt.jauthortagger.model.Filenames.DIFF_REPORT_TEMPLATE;
 import static hu.juranyi.zsolt.jauthortagger.model.Filenames.diffReportOf;
 
 import java.io.File;
@@ -31,9 +32,23 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.slf4j.Logger;
 
 import hu.juranyi.zsolt.jauthortagger.model.BackupMode;
+import hu.juranyi.zsolt.jauthortagger.model.Filenames;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
+import hu.juranyi.zsolt.jauthortagger.util.DiffCalculator;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
 
+/**
+ * Used for generating the sexy diff report. Basically this class only receives
+ * diff data and calls <i>Apache Velocity</i> to output the HTML file using the
+ * template defined by <code>src/main/resources/authors-diff-report.vm</code>.
+ * The most important parameter of this class is the list of
+ * <code>JavaFile</code>, they should contain the calculated diff result.
+ *
+ * @author Zsolt Jurányi
+ * @see DiffCalculator
+ * @see JavaFile
+ *
+ */
 public class DiffReportWriter {
 
 	private static final Logger LOG = Log.forClass(DiffReportWriter.class);
@@ -48,24 +63,61 @@ public class DiffReportWriter {
 	private final BackupMode backupMode;
 	private final List<JavaFile> javaFiles;
 
+	/**
+	 * Creates an instance.
+	 *
+	 * @param projectDir
+	 *            The project directory.
+	 * @param backupMode
+	 *            The backup mode.
+	 * @param javaFiles
+	 *            The <code>JavaFile</code> objects with calculated diffs
+	 *            inside.
+	 * @see BackupMode
+	 * @see DiffCalculator
+	 * @see JavaFile
+	 */
 	public DiffReportWriter(File projectDir, BackupMode backupMode, List<JavaFile> javaFiles) {
 		this.projectDir = projectDir;
 		this.backupMode = backupMode;
 		this.javaFiles = javaFiles;
 	}
 
+	/**
+	 * Returns the backup mode.
+	 *
+	 * @return The backup mode.
+	 */
 	public BackupMode getBackupMode() {
 		return backupMode;
 	}
 
+	/**
+	 * Returns the <code>JavaFile</code> objects.
+	 *
+	 * @return The <code>JavaFile</code> objects.
+	 */
 	public List<JavaFile> getJavaFiles() {
 		return javaFiles;
 	}
 
+	/**
+	 * Returns the project directory.
+	 *
+	 * @return The project directory.
+	 */
 	public File getProjectDir() {
 		return projectDir;
 	}
 
+	/**
+	 * Does the real thing: builds up the <code>VelocityContext</code> by
+	 * putting in all fields an the timestamp, then kindly asks <i>Velocity</i>
+	 * to merge the template with the values and spit out the HTML file into the
+	 * project directory.
+	 * 
+	 * @see Filenames#diffReportOf(File)
+	 */
 	public void writeDiffReport() {
 		File outputFile = diffReportOf(projectDir);
 
@@ -78,7 +130,7 @@ public class DiffReportWriter {
 		FileWriter w = null;
 		try {
 			w = new FileWriter(outputFile);
-			Velocity.mergeTemplate("authors-diff-report.vm", "UTF-8", vc, w);
+			Velocity.mergeTemplate(DIFF_REPORT_TEMPLATE, "UTF-8", vc, w);
 		} catch (IOException e) {
 			LOG.error("Error when writing diff report", e);
 		} finally {

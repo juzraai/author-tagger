@@ -51,9 +51,9 @@ Usage
 -----
 
 1. Install JRE 1.7+
-* Get the jar: (comes soon to GitHub! :))
-* Write a configuration file (see below) for your project named `path/2/ur/project/.authors`
-* Run the thingy: `java -jar author-tagger.jar path/2/ur/project`
+2. Get the jar: (comes soon to GitHub! :))
+3. Write a configuration file (see below) for your project named `path/2/ur/project/.authors`
+4. Run the thingy: `java -jar author-tagger.jar path/2/ur/project`
 
 **JAuthorTagger** will automatically create a **backup** of every file, by adding `.at-save` suffix to the original filename. Previous backups will be overwritten.
 
@@ -61,6 +61,7 @@ Usage
 ### No-backup mode
 
 If you provide "nobackup" as a 2nd command line argument:
+
 * no backup will be created
 * also, previous backups will be deleted
 
@@ -68,13 +69,14 @@ If you provide "nobackup" as a 2nd command line argument:
 ### Test mode
 
 The program has a test mode which is a twisted behaviour. If you provide "test" as the 2nd argument:
+
 * your original `.java` files will NOT be modified
 * new files will be created instead, with `.at-test` suffix in their filename
 
 
 ### Restore
 
-If you used the default backuping mode and you don't like the result, you can revert the changes by calling **JAuthorTagger** with "restore" as the 2nd argument.
+If you used the default backup mode and you don't like the result, you can revert the changes by calling **JAuthorTagger** with "restore" as the 2nd argument.
 
 
 

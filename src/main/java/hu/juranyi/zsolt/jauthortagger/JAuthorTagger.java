@@ -72,7 +72,7 @@ public class JAuthorTagger {
 			}
 		}
 
-		// receive backuping mode as 2nd arg
+		// receive backup mode as 2nd arg
 		if (args.length >= 2) {
 			if ("nobackup".equalsIgnoreCase(args[1])) {
 				backupMode = NO_BACKUP;

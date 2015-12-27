@@ -44,7 +44,7 @@ import hu.juranyi.zsolt.jauthortagger.model.JavaFilePatterns;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
 
 /**
- * This class does the real magic: the inejcting of <code>@author</code> tags
+ * This class does the real magic: the injecting of <code>@author</code> tags
  * based on the information in the given <code>JavaFile</code> object, and
  * handling file backups according to the given <code>BackupMode</code> value.
  *
