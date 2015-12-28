@@ -20,9 +20,8 @@ import java.util.regex.Pattern;
 
 /**
  * <p>
- * Handy utility which turns readable class name filters into regular
- * expressions. The readable filters can contain joker characters as well. The
- * accepted filters are these:
+ * Implementation of <code>AbstractStringFilter</code>, which handles the input
+ * filter as a specific filter for class names. The accepted filters are these:
  * </p>
  * <ul>
  * <li><code>"ClassName"</code> - Simple filter to test only the short class
@@ -41,36 +40,23 @@ import java.util.regex.Pattern;
  * @author Zsolt Jurányi
  *
  */
-public class ClassNameFilter {
+public class ClassNameFilter extends AbstractStringFilter {
 
 	/**
-	 * Transforms the given filter into a regular expression using
-	 * <code>filterStringToRegex</code> then compiles it to a Java
-	 * <code>Pattern</code> object.
+	 * Creates an instance using a readable filter which will be converted into
+	 * a regular expression. The <code>filterToPattern</code> method will be
+	 * called to perform the conversion.
 	 *
 	 * @param filter
-	 *            The filter <code>String</code> to compile.
-	 * @return The given filter as a <code>Pattern</code> object.
-	 * @see #filterStringToRegex(String)
+	 *            - Readable filter <code>String</code> to use.
+	 * @see #filterToPattern(String)
 	 */
-	public static Pattern filterStringToPattern(String filter) {
-		return Pattern.compile(filterStringToRegex(filter));
+	public ClassNameFilter(String filter) {
+		super(filter);
 	}
 
-	/**
-	 * Transforms the given filter into a regular expression. Joker characters
-	 * will be replaced with appropriate regular expression parts or if the
-	 * input is a regular expression, only the leading and trailing slashes will
-	 * be trimmed. See the class documentation for detailed information about
-	 * filter formats.
-	 *
-	 *
-	 * @param filter
-	 *            The filter <code>String</code> to transform.
-	 * @return The filter transformed into a regular expression.
-	 * @see ClassNameFilter
-	 */
-	public static String filterStringToRegex(String filter) {
+	@Override
+	protected Pattern filterToPattern(String filter) {
 		String regex = filter;
 		if (regex.matches("\\/.*\\/")) { // regex - enclosed in slashes
 			regex = regex.substring(1, regex.length() - 1);
@@ -86,46 +72,7 @@ public class ClassNameFilter {
 			regex = regex.replaceAll("\\*", "[^.]*"); // * -> [^.]*
 			regex = "(.*\\.)?" + regex + "$"; // (.*\.)?filter$
 		}
-		return regex;
-	}
-
-	private final String filter;
-	private final String regex;
-
-	/**
-	 * Creates an instance.
-	 *
-	 * @param filter
-	 *            A filter <code>String</code> to be used in this instance.
-	 */
-	public ClassNameFilter(String filter) {
-		this.filter = filter;
-		this.regex = filterStringToRegex(filter);
-	}
-
-	/**
-	 * Test the given class name against the stored filter <code>String</code>
-	 *
-	 * @param className
-	 *            The class name to test.
-	 * @return <code>true</code> if the given class name matches the filter.
-	 */
-	public boolean accept(String className) {
-		return null != className && className.matches(regex);
-	}
-
-	/**
-	 * Returns the filter <code>String</code>.
-	 *
-	 * @return The filter <code>String</code>.
-	 */
-	public String getFilter() {
-		return filter;
-	}
-
-	@Override
-	public String toString() {
-		return "ClassNameFilter [filter=" + filter + "]";
+		return Pattern.compile(regex);
 	}
 
 }

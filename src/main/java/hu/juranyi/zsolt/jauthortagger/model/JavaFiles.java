@@ -18,11 +18,13 @@ package hu.juranyi.zsolt.jauthortagger.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 
 import hu.juranyi.zsolt.jauthortagger.util.ClassNameFilter;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
+import hu.juranyi.zsolt.jauthortagger.util.SimpleStringFilter;
 
 /**
  * Extends <code>ArrayList&lt;JavaFile&gt;</code> with some useful methods like
@@ -87,13 +89,34 @@ public class JavaFiles extends ArrayList<JavaFile> {
 		}
 	}
 
-	public void delAuthor(String classFilter, String authorFilter) {
-		// TODO doc
-		ClassNameFilter filter = new ClassNameFilter(classFilter);
+	/**
+	 * Filters <code>JavaFile</code> objects with <code>ClassNameFilter</code>,
+	 * and deletes their authors which match the given filter. Author filtering
+	 * is done using <code>SimpleStringFilter</code>.
+	 *
+	 * @param classFilterStr
+	 *            - Class name filter to apply on <code>JavaFile</code> objects.
+	 * @param authorFilterStr
+	 *            - Simple filter to apply on authors.
+	 * @see ClassNameFilter
+	 * @see SimpleStringFilter
+	 */
+	public void delAuthor(String classFilterStr, String authorFilterStr) {
+		ClassNameFilter classFilter = new ClassNameFilter(classFilterStr);
+		SimpleStringFilter authorFilter = new SimpleStringFilter(authorFilterStr);
 		for (JavaFile javaFile : this) {
-			if (filter.accept(javaFile.getTypeName())) {
-				// LOG.trace("{} << {}", author, javaFile.getTypeName());
-				// TODO delete author matching author filter!
+			if (classFilter.accept(javaFile.getTypeName())) {
+				int i = 0;
+				List<String> authors = javaFile.getAuthors();
+				while (i < authors.size()) {
+					String author = authors.get(i);
+					if (authorFilter.accept(author)) {
+						LOG.trace("{} << {}", author, javaFile.getTypeName());
+						authors.remove(i);
+					} else {
+						i++;
+					}
+				}
 			}
 		}
 	}
@@ -101,7 +124,7 @@ public class JavaFiles extends ArrayList<JavaFile> {
 	/**
 	 * Removes <code>JavaFile</code> objects that match the given class name
 	 * filter.
-	 * 
+	 *
 	 * @param classFilter
 	 *            - Class name filter to select <code>JavaFile</code> objects to
 	 *            remove.

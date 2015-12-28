@@ -1,4 +1,4 @@
-JAuthorTagger <img src="https://img.shields.io/badge/version-1.1.0--SNAPSHOT-blue.svg"/>
+JAuthorTagger <img src="https://img.shields.io/badge/version-1.1.0--SNAPSHOT-blue.svg"/> <img alt="Build Status Images" src="https://travis-ci.org/juzraai/author-tagger.svg">
 =============
 
 **Re-edit your javadoc @author tags at project level! ;)**

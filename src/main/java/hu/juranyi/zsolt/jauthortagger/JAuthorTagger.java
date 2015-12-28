@@ -51,6 +51,7 @@ import hu.juranyi.zsolt.jauthortagger.util.Log;
  */
 public class JAuthorTagger {
 
+	// TODO DOC: "-" before param descriptions
 	// TODO JUnit tests to verify main functionality
 
 	static {

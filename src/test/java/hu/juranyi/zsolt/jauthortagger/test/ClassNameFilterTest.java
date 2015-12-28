@@ -26,7 +26,7 @@ import hu.juranyi.zsolt.jauthortagger.util.ClassNameFilter;
 /**
  * Test <code>ClassNameFilter</code> class' main functionality: the filter to
  * regex conversion.
- * 
+ *
  * @author Zsolt Jurányi
  *
  */
@@ -34,9 +34,9 @@ public class ClassNameFilterTest {
 
 	@Test
 	public void fullNameFilterToRegex() {
-		String filterString = "Cla??Name*";
+		ClassNameFilter filter = new ClassNameFilter("Cla??Name*");
 		String expectedRegex = "(.*\\.)?Cla[^.][^.]Name[^.]*$";
-		String generatedRegex = ClassNameFilter.filterStringToRegex(filterString);
+		String generatedRegex = filter.getPattern().pattern();
 		assertEquals(expectedRegex, generatedRegex);
 	}
 
@@ -47,17 +47,17 @@ public class ClassNameFilterTest {
 
 	@Test
 	public void regexFilterToRegex() {
-		String filterString = "/Will this remain a regular expression?/";
+		ClassNameFilter filter = new ClassNameFilter("/Will this remain a regular expression?/");
 		String expectedRegex = "Will this remain a regular expression?";
-		String generatedRegex = ClassNameFilter.filterStringToRegex(filterString);
+		String generatedRegex = filter.getPattern().pattern();
 		assertEquals(expectedRegex, generatedRegex);
 	}
 
 	@Test
 	public void shortNameFilterToRegex() {
-		String filterString = "package*.name?.**ClassName";
+		ClassNameFilter filter = new ClassNameFilter("package*.name?.**ClassName");
 		String expectedRegex = "^package[^.]*\\.name[^.]\\..*ClassName$";
-		String generatedRegex = ClassNameFilter.filterStringToRegex(filterString);
+		String generatedRegex = filter.getPattern().pattern();
 		assertEquals(expectedRegex, generatedRegex);
 	}
 
