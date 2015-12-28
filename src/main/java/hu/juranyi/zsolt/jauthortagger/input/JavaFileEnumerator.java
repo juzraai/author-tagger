@@ -99,7 +99,6 @@ public class JavaFileEnumerator {
 			}
 		}
 		return new JavaFiles(javaFiles);
-
 	}
 
 }

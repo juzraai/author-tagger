@@ -71,9 +71,15 @@ public class JavaFileAnalyzer {
 	 *
 	 * @param javaFile
 	 *            The <code>JavaFile</code> object to be analyzed.
+	 * @return <code>true</code> if analyzation succeded, <code>false</code> if
+	 *         there were any errors.
 	 * @see JavaFile
 	 */
-	public void analyzeJavaFile(JavaFile javaFile) {
+	public boolean analyzeJavaFile(JavaFile javaFile) {
+		boolean success = false;
+		// TODO handle root pkg classes -> no package declaration
+		// TODO handle package-info.java -> no type declaration
+
 		LOG.trace("Analyzing .java file: {}", javaFile.getFile().getAbsoluteFile());
 		Scanner s = null;
 		try {
@@ -115,6 +121,7 @@ public class JavaFileAnalyzer {
 			}
 
 			LOG.trace("{} ", javaFile);
+			success = null != javaFile.getTypeName();
 		} catch (FileNotFoundException e) {
 			LOG.error("Error while analyzing .java file", e);
 		} finally {
@@ -122,6 +129,7 @@ public class JavaFileAnalyzer {
 				s.close();
 			}
 		}
+		return success;
 	}
 
 	/**
@@ -135,8 +143,13 @@ public class JavaFileAnalyzer {
 	 */
 	public void analyzeJavaFiles(List<JavaFile> javaFiles) {
 		LOG.debug("Analyzing {} .java files", javaFiles.size());
-		for (JavaFile javaFile : javaFiles) {
-			analyzeJavaFile(javaFile);
+		int i = 0;
+		while (i < javaFiles.size()) {
+			if (!analyzeJavaFile(javaFiles.get(i))) {
+				javaFiles.remove(i);
+			} else {
+				i++;
+			}
 		}
 	}
 

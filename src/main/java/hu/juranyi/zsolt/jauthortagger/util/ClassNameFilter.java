@@ -107,10 +107,11 @@ public class ClassNameFilter {
 	 * Test the given class name against the stored filter <code>String</code>
 	 *
 	 * @param className
-	 * @return
+	 *            The class name to test.
+	 * @return <code>true</code> if the given class name matches the filter.
 	 */
 	public boolean accept(String className) {
-		return className.matches(regex);
+		return null != className && className.matches(regex);
 	}
 
 	/**

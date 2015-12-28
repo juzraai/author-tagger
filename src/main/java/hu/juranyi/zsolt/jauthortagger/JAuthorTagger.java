@@ -51,6 +51,8 @@ import hu.juranyi.zsolt.jauthortagger.util.Log;
  */
 public class JAuthorTagger {
 
+	// TODO JUnit tests to verify main functionality
+
 	static {
 		// Log.setLogLevel(AuthorTaggerConfig.class, Log.Level.WARN);
 		Log.setLogLevel(JavaFileEnumerator.class, Log.Level.WARN);
