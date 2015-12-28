@@ -35,6 +35,7 @@ import hu.juranyi.zsolt.jauthortagger.input.JavaFileAnalyzer;
 import hu.juranyi.zsolt.jauthortagger.input.JavaFileEnumerator;
 import hu.juranyi.zsolt.jauthortagger.model.BackupMode;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
+import hu.juranyi.zsolt.jauthortagger.model.JavaFiles;
 import hu.juranyi.zsolt.jauthortagger.output.AuthorTagWriter;
 import hu.juranyi.zsolt.jauthortagger.output.DiffReportWriter;
 import hu.juranyi.zsolt.jauthortagger.util.DiffCalculator;
@@ -184,7 +185,7 @@ public class JAuthorTagger {
 		LOG.info("JAuthorTagger running in {} mode", backupMode);
 
 		LOG.info("Enumerating .java files in project directory: {}", projectDir.getAbsolutePath());
-		List<JavaFile> javaFiles = new JavaFileEnumerator().enumerateJavaFiles(new File(projectDir, "src"));
+		JavaFiles javaFiles = new JavaFileEnumerator().enumerateJavaFiles(new File(projectDir, "src"));
 
 		if (RESTORE != backupMode) {
 			LOG.info("Analyzing {} .java files", javaFiles.size());

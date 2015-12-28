@@ -23,14 +23,15 @@ import java.util.List;
 import org.slf4j.Logger;
 
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
+import hu.juranyi.zsolt.jauthortagger.model.JavaFiles;
 import hu.juranyi.zsolt.jauthortagger.util.DirectoryFilter;
 import hu.juranyi.zsolt.jauthortagger.util.JavaFileFilter;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
 
 /**
  * Utility for enumerating <code>.java</code> files in a given directory
- * recursively. It produces <code>JavaFile</code> objects with their
- * <code>file</code> field filled in.
+ * recursively. It produces a <code>JavaFiles</code> object, which contains
+ * <code>JavaFile</code> objects with their <code>file</code> field filled in.
  *
  * @author Zsolt Jurányi
  * @see JavaFile
@@ -43,9 +44,10 @@ public class JavaFileEnumerator {
 	/**
 	 * <p>
 	 * Enumerates <code>.java</code> files in the given directory recursively
-	 * and return <code>JavaFile</code> objects. The <code>file</code> fields of
-	 * these objects will be filled in with the appropriate <code>File</code>
-	 * object pointing to the <code>.java</code> file.
+	 * and return a <code>JavaFiles</code> object. The <code>file</code> fields
+	 * of the embedded <code>JavaFile</code> objects will be filled in with the
+	 * appropriate <code>File</code> object pointing to the <code>.java</code>
+	 * file.
 	 * </p>
 	 * <p>
 	 * This method is the public entry point for the recursive algorithm
@@ -54,46 +56,50 @@ public class JavaFileEnumerator {
 	 *
 	 * @param dir
 	 *            The directory to be searched for <code>.java</code> files.
-	 * @return The found <code>.java</code> files as <code>JavaFile</code>
-	 *         objects.
+	 * @return The found <code>.java</code> files as a <code>JavaFiles</code>
+	 *         object.
 	 * @see #enumerateJavaFilesImpl(File)
 	 * @see JavaFile
+	 * @see JavaFiles
 	 * @see JavaFileFilter
 	 * @see DirectoryFilter
 	 */
-	public List<JavaFile> enumerateJavaFiles(File dir) {
+	public JavaFiles enumerateJavaFiles(File dir) {
 		if (!dir.exists() || !dir.isDirectory()) {
 			LOG.error("Something's wrong, it is not an existing directory: {}", dir.getAbsolutePath());
-			return new ArrayList<JavaFile>();
+			return new JavaFiles();
 		}
 		return enumerateJavaFilesImpl(dir);
 	}
 
 	/**
 	 * Enumerates <code>.java</code> files in the given directory recursively
-	 * and return <code>JavaFile</code> objects. The <code>file</code> fields of
-	 * these objects will be filled in with the appropriate <code>File</code>
-	 * object pointing to the <code>.java</code> file.
+	 * and return a <code>JavaFiles</code> object. The <code>file</code> fields
+	 * of the embedded <code>JavaFile</code> objects will be filled in with the
+	 * appropriate <code>File</code> object pointing to the <code>.java</code>
+	 * file.
 	 *
-	 * @param dir
-	 *            The directory to be searched for <code>.java</code> files.
-	 * @return The found <code>.java</code> files as <code>JavaFile</code>
-	 *         objects.
+	 * @return The found <code>.java</code> files as a <code>JavaFiles</code>
+	 *         object.
 	 * @see JavaFile
+	 * @see JavaFiles
 	 * @see JavaFileFilter
 	 * @see DirectoryFilter
 	 */
-	protected List<JavaFile> enumerateJavaFilesImpl(File dir) {
-		LOG.trace("Enumerating .java files in directory: {}", dir.getAbsolutePath());
+	protected JavaFiles enumerateJavaFilesImpl(File dir) {
 		List<JavaFile> javaFiles = new ArrayList<JavaFile>();
-		for (File javaFile : dir.listFiles(new JavaFileFilter())) {
-			LOG.trace("Found .java file: {}", javaFile.getName());
-			javaFiles.add(new JavaFile(javaFile));
+		if (null != dir && dir.exists() && dir.isDirectory()) {
+			LOG.trace("Enumerating .java files in directory: {}", dir.getAbsolutePath());
+			for (File javaFile : dir.listFiles(new JavaFileFilter())) {
+				LOG.trace("Found .java file: {}", javaFile.getName());
+				javaFiles.add(new JavaFile(javaFile));
+			}
+			for (File subDir : dir.listFiles(new DirectoryFilter())) {
+				javaFiles.addAll(enumerateJavaFilesImpl(subDir));
+			}
 		}
-		for (File subDir : dir.listFiles(new DirectoryFilter())) {
-			javaFiles.addAll(enumerateJavaFilesImpl(subDir));
-		}
-		return javaFiles;
+		return new JavaFiles(javaFiles);
+
 	}
 
 }
