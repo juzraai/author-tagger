@@ -16,8 +16,6 @@
 
 package hu.juranyi.zsolt.jauthortagger.output;
 
-import static hu.juranyi.zsolt.jauthortagger.model.AuthorTaggingMode.MERGE;
-import static hu.juranyi.zsolt.jauthortagger.model.AuthorTaggingMode.SKIP;
 import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.BACKUP;
 import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.NO_BACKUP;
 import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.RESTORE;
@@ -31,9 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.LinkedHashSet;
 import java.util.Scanner;
-import java.util.Set;
 
 import org.slf4j.Logger;
 
@@ -117,21 +113,7 @@ public class AuthorTagWriter {
 			backupFile.delete();
 		}
 
-		// skipping
-		if (null == javaFile.getTypeName() || SKIP == javaFile.getTaggingMode()) {
-			LOG.info("Skipping file: {}", javaFile.getFile().getAbsolutePath());
-			return;
-		}
-
 		LOG.info("Processing type: {}", javaFile.getTypeName());
-
-		// build up final author list
-		Set<String> authorsToWrite = new LinkedHashSet<String>();
-		if (MERGE == javaFile.getTaggingMode()) {
-			authorsToWrite.addAll(javaFile.getOldAuthors());
-		}
-		authorsToWrite.addAll(javaFile.getNewAuthors());
-		LOG.debug("Final author list for {} is: {}", javaFile.getTypeName(), authorsToWrite);
 
 		// let's roll
 		Scanner s = null;
@@ -165,7 +147,7 @@ public class AuthorTagWriter {
 					}
 
 					if (noJavadoc || atJavadocEnd || isAuthorLine) {
-						for (String author : authorsToWrite) {
+						for (String author : javaFile.getAuthors()) {
 							w.write(" * @author " + author);
 							w.newLine();
 						}

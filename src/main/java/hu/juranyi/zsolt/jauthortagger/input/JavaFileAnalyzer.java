@@ -47,10 +47,10 @@ public class JavaFileAnalyzer {
 	 * file will be read line by line. It looks for the package name, the type
 	 * name and the existing <code>@author</code> tags, and fills
 	 * <code>JavaFile</code> object's <code>typeName</code> and
-	 * <code>oldAuthors</code> fields accordingly. It only reads the file until
-	 * it finds the first public type declaration. It saves the index of the
-	 * type declaration's first line (it cares about annotations:)), so the
-	 * tagger will know when to stop modifying and switch to simple copying.
+	 * <code>authors</code> fields accordingly. It only reads the file until it
+	 * finds the first public type declaration. It saves the index of the type
+	 * declaration's first line (it cares about annotations:)), so the tagger
+	 * will know when to stop modifying and switch to simple copying.
 	 * </p>
 	 * <p>
 	 * The algorithm is really simple so there are some <b>limitations</b> on
@@ -71,9 +71,15 @@ public class JavaFileAnalyzer {
 	 *
 	 * @param javaFile
 	 *            The <code>JavaFile</code> object to be analyzed.
+	 * @return <code>true</code> if analyzation succeded, <code>false</code> if
+	 *         there were any errors.
 	 * @see JavaFile
 	 */
-	public void analyzeJavaFile(JavaFile javaFile) {
+	public boolean analyzeJavaFile(JavaFile javaFile) {
+		boolean success = false;
+		// TODO handle root pkg classes -> no package declaration
+		// TODO handle package-info.java -> no type declaration
+
 		LOG.trace("Analyzing .java file: {}", javaFile.getFile().getAbsoluteFile());
 		Scanner s = null;
 		try {
@@ -101,8 +107,8 @@ public class JavaFileAnalyzer {
 				Matcher typeMatcher = JavaFilePatterns.TYPE_DECLARATION_PATTERN.matcher(line);
 
 				if (authorMatcher.find()) {
-					String oldAuthor = authorMatcher.group(1).trim();
-					javaFile.getOldAuthors().add(oldAuthor);
+					String author = authorMatcher.group(1).trim();
+					javaFile.getAuthors().add(author);
 				} else if (annotationMatcher.find()) {
 					javaFile.setTypeDeclarationStartLine(ln);
 				} else if (typeMatcher.find()) {
@@ -114,7 +120,8 @@ public class JavaFileAnalyzer {
 				}
 			}
 
-			LOG.trace("{} - old authors: {}", javaFile.getTypeName(), javaFile.getOldAuthors());
+			LOG.trace("{} ", javaFile);
+			success = null != javaFile.getTypeName();
 		} catch (FileNotFoundException e) {
 			LOG.error("Error while analyzing .java file", e);
 		} finally {
@@ -122,6 +129,7 @@ public class JavaFileAnalyzer {
 				s.close();
 			}
 		}
+		return success;
 	}
 
 	/**
@@ -135,8 +143,13 @@ public class JavaFileAnalyzer {
 	 */
 	public void analyzeJavaFiles(List<JavaFile> javaFiles) {
 		LOG.debug("Analyzing {} .java files", javaFiles.size());
-		for (JavaFile javaFile : javaFiles) {
-			analyzeJavaFile(javaFile);
+		int i = 0;
+		while (i < javaFiles.size()) {
+			if (!analyzeJavaFile(javaFiles.get(i))) {
+				javaFiles.remove(i);
+			} else {
+				i++;
+			}
 		}
 	}
 

@@ -18,34 +18,29 @@ package hu.juranyi.zsolt.jauthortagger.input;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 
-import hu.juranyi.zsolt.jauthortagger.model.AuthorTaggingMode;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
-import hu.juranyi.zsolt.jauthortagger.util.ClassNameFilter;
+import hu.juranyi.zsolt.jauthortagger.model.JavaFiles;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
 
 /**
  * Class for loading, interpreting and applying project configuration on
- * <code>JavaFile</code> objects. The project configuration file is a simple
+ * <code>JavaFiles</code> objects. The project configuration file is a simple
  * text file which will be interpreted line by line, sequentially.
  *
  * @author Zsolt Jurányi
- * @see JavaFile
+ * @see JavaFiles
  *
  */
 public class AuthorTaggerConfig { // TODO DOC: config file format...
 
 	private static final Logger LOG = Log.forClass(AuthorTaggerConfig.class);
-	private static final Pattern FILTER_SECTION_HEADER_PATTERN = Pattern
-			.compile("^\\$\\t(?<f>[^\\t]+)(\\t(?<m>merge|overwrite|skip))?$", Pattern.CASE_INSENSITIVE);
-	private static final Pattern AUTHOR_SECTION_HEADER_PATTERN = Pattern.compile("^@\\t(?<a>.*)$");
+	private static final Pattern CONF_LINE_PATTERN = Pattern.compile("^\\s*(?<a>[$@!-+])\\s*(?<p>.*)\\s*$");
 	private final File configFile;
 
 	/**
@@ -57,58 +52,6 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 	 */
 	public AuthorTaggerConfig(File configFile) {
 		this.configFile = configFile;
-	}
-
-	/**
-	 * Adds a new author to the given <code>JavaFile</code> objects. Called by
-	 * <code>loadAndApply</code>.
-	 *
-	 * @param filteredJavaFiles
-	 *            List of <code>JavaFile</code> objects to be be modified.
-	 * @param author
-	 *            The new author to be added to the <code>JavaFile</code>
-	 *            objects.
-	 * @see #loadAndApply(List)
-	 * @see JavaFile
-	 */
-	protected void addAuthor(List<JavaFile> filteredJavaFiles, String author) {
-		LOG.debug("@author {} >> {} .java files", author, filteredJavaFiles.size());
-		for (JavaFile javaFile : filteredJavaFiles) {
-			LOG.trace("@author {} >> {}", author, javaFile.getTypeName());
-			javaFile.getNewAuthors().add(author);
-		}
-	}
-
-	/**
-	 * Filters the given <code>JavaFile</code> objects with the given filter
-	 * <code>String</code>. The filter will be converted into a regular
-	 * expression using <code>ClassNameFilter</code>. <code>JavaFiles</code>
-	 * will be filtered by their <code>typeName</code> field. Called by
-	 * <code>loadAndApply</code>.
-	 *
-	 * @param javaFiles
-	 *            The <code>JavaFile</code> objects to be filtered.
-	 * @param filter
-	 *            The filter <code>String</code> to use.
-	 * @return A new list containing <code>JavaFile</code> objects accepted by
-	 *         the filter.
-	 * @see #loadAndApply(List)
-	 * @see ClassNameFilter
-	 * @see JavaFile
-	 */
-	protected List<JavaFile> filterJavaFiles(List<JavaFile> javaFiles, String filter) {
-		List<JavaFile> filteredJavaFiles = new ArrayList<JavaFile>();
-		if (null == filter || filter.trim().isEmpty()) {
-			return filteredJavaFiles;
-		}
-		String regex = ClassNameFilter.filterStringToRegex(filter);
-		for (JavaFile javaFile : javaFiles) {
-			String typeName = javaFile.getTypeName();
-			if (null != typeName && typeName.matches(regex)) {
-				filteredJavaFiles.add(javaFile);
-			}
-		}
-		return filteredJavaFiles;
 	}
 
 	/**
@@ -124,41 +67,63 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 
 	/**
 	 * Loads, interprets and applies the configuration on the given
-	 * <code>JavaFile</code> objects. Filters them and sets tagging mode or adds
-	 * new authors according to the configuration file.
+	 * <code>JavaFiles</code> object. Adds or removes authors using the filters
+	 * defined in the configuration file. Skipping is also handled here: skipped
+	 * <code>JavaFile</code> objects will be removed from the memory so they
+	 * won't reach the tagging procedure.
 	 *
 	 * @param javaFiles
-	 *            List of <code>JavaFile</code> objects to be modified.
-	 * @see AuthorTaggingMode
-	 * @see ClassNameFilter
+	 *            A <code>JavaFiles</code> to work on.
 	 * @see JavaFile
+	 * @see JavaFiles
 	 */
-	public void loadAndApply(List<JavaFile> javaFiles) {
+	public void loadAndApply(JavaFiles javaFiles) {
 		Scanner s = null;
 		try {
 			s = new Scanner(configFile, "UTF-8");
-			List<JavaFile> filteredJavaFiles = null;
+			String classFilter = null;
 			String author = null;
 			while (s.hasNextLine()) {
 				String line = s.nextLine().replaceAll("#.*$", "").replaceAll("\\s+$", "");
-				Matcher fm = FILTER_SECTION_HEADER_PATTERN.matcher(line);
-				Matcher am = AUTHOR_SECTION_HEADER_PATTERN.matcher(line);
 
-				if (fm.find()) {
-					filteredJavaFiles = filterJavaFiles(javaFiles, fm.group("f"));
-					author = null;
-					setTaggingMode(filteredJavaFiles, fm.group("m"));
-				} else if (am.find()) {
-					author = am.group("a").trim();
-					filteredJavaFiles = null;
-				} else if (line.startsWith("\t")) {
-					line = line.trim();
-					if (null != filteredJavaFiles) {
-						addAuthor(filteredJavaFiles, line);
-					} else if (null != author) {
-						addAuthor(filterJavaFiles(javaFiles, line), author);
+				Matcher m = CONF_LINE_PATTERN.matcher(line);
+				if (m.find()) {
+					String action = m.group("a");
+					String param = m.group("p");
+					if ("$".equals(action)) {
+						// new block - rules for selected classes
+						classFilter = param;
+						author = null;
+					} else if ("@".equals(action)) {
+						// new block - rules for an author
+						author = param;
+						classFilter = null;
+					} else if ("!".equals(action)) {
+						// special action
+						if ("skip".equalsIgnoreCase(param) && null != classFilter) {
+							LOG.trace("SKIP :: {}", classFilter);
+							javaFiles.skip(classFilter);
+						}
+					} else if ("+".equals(action)) {
+						// addition
+						if (null != classFilter) {
+							LOG.trace("{} >> {}", param, classFilter);
+							javaFiles.addAuthor(classFilter, param);
+						} else if (null != author) {
+							LOG.trace("{} >> {}", author, param);
+							javaFiles.addAuthor(param, author);
+						}
+					} else if ("-".equals(action)) {
+						// deletion
+						if (null != classFilter) {
+							LOG.trace("{} << {}", param, classFilter);
+							javaFiles.addAuthor(classFilter, param);
+						} else if (null != author) {
+							LOG.trace("{} << {}", author, param);
+							javaFiles.addAuthor(param, author);
+						}
 					}
-				}
+				} // conf line
 			}
 		} catch (FileNotFoundException e) {
 			LOG.error("Config file not found", e);
@@ -167,36 +132,8 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 				s.close();
 			}
 		}
-	}
-
-	/**
-	 * Sets the tagging mode in the given <code>JavaFile</code> objects. Called
-	 * by <code>loadAndApply</code>.
-	 *
-	 * @param filteredJavaFiles
-	 *            List of <code>JavaFile</code> objects to be be modified.
-	 * @param modeString
-	 *            The tagging mode as a <code>String</code>. It should have one
-	 *            of these values: <code>"MERGE"</code>,
-	 *            <code>"OVERWRITE"</code>, <code>"SKIP"</code>. If it's
-	 *            <code>null</code> or unrecognizable, nothing will be modified.
-	 * @see #loadAndApply(List)
-	 * @see AuthorTaggingMode
-	 * @see JavaFile
-	 */
-	protected void setTaggingMode(List<JavaFile> filteredJavaFiles, String modeString) {
-		AuthorTaggingMode taggingMode = null;
-		try {
-			taggingMode = AuthorTaggingMode.valueOf(modeString.toUpperCase());
-		} catch (Exception e) {
-			LOG.warn("Invalid tagging mode: {}", modeString);
-		}
-		if (null != taggingMode) {
-			LOG.debug("Setting tagging mode to {} for {} .java files", taggingMode, filteredJavaFiles.size());
-			for (JavaFile javaFile : filteredJavaFiles) {
-				LOG.trace("{} :: {}", taggingMode, javaFile.getTypeName());
-				javaFile.setTaggingMode(taggingMode);
-			}
+		for (JavaFile javaFile : javaFiles) {
+			LOG.trace("{}", javaFile);
 		}
 	}
 

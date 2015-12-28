@@ -16,8 +16,6 @@
 
 package hu.juranyi.zsolt.jauthortagger.model;
 
-import static hu.juranyi.zsolt.jauthortagger.model.AuthorTaggingMode.MERGE;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +28,11 @@ import hu.juranyi.zsolt.jauthortagger.output.DiffReportWriter;
  * Model class representing a <code>.java</code> file. It stores a
  * <code>File</code> object which points to the physical file, and some fields
  * that will be modified by the analyzer and the configuration. It will contain
- * the existing and new authors, the tagging mode and the index of the type
- * declaration's start line in the <code>.java</code> file. The default tagging
- * mode is <code>MERGE</code>. A calculated diff will be also stored for diff
- * report generation.
+ * the authors, the index of the type declaration's start line in the
+ * <code>.java</code> file, and the calculated diff for report generation.
  *
  * @author Zsolt Jurányi
  * @see AuthorTaggerConfig
- * @see AuthorTaggingMode
  * @see DiffReportWriter
  * @see JavaFileAnalyzer
  *
@@ -46,9 +41,7 @@ public class JavaFile {
 
 	private final File file;
 	private String typeName;
-	private AuthorTaggingMode taggingMode = MERGE;
-	private final List<String> oldAuthors = new ArrayList<String>();
-	private final List<String> newAuthors = new ArrayList<String>();
+	private final List<String> authors = new ArrayList<String>();
 	private int typeDeclarationStartLine = -1;
 	private DiffResult diffResult;
 
@@ -61,6 +54,32 @@ public class JavaFile {
 	 */
 	public JavaFile(File file) {
 		this.file = file;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		JavaFile other = (JavaFile) obj;
+		if (file == null) {
+			if (other.file != null)
+				return false;
+		} else if (!file.equals(other.file))
+			return false;
+		return true;
+	}
+
+	/**
+	 * Returns the list of authors.
+	 *
+	 * @return The list of authors.
+	 */
+	public List<String> getAuthors() {
+		return authors;
 	}
 
 	/**
@@ -85,36 +104,6 @@ public class JavaFile {
 	}
 
 	/**
-	 * Returns the list of new authors (authors to be added by the tagger).
-	 *
-	 * @return The list of new authors (authors to be added by the tagger).
-	 */
-	public List<String> getNewAuthors() {
-		return newAuthors;
-	}
-
-	/**
-	 * Returns the list of old authors (authors existing in the
-	 * <code>.java</code> file).
-	 *
-	 * @return The list of old authors (authors existing in the
-	 *         <code>.java</code> file).
-	 */
-	public List<String> getOldAuthors() {
-		return oldAuthors;
-	}
-
-	/**
-	 * Returns the tagging mode. The default value is <code>MERGE</code>.
-	 *
-	 * @return The tagging mode.
-	 * @see AuthorTaggingMode
-	 */
-	public AuthorTaggingMode getTaggingMode() {
-		return taggingMode;
-	}
-
-	/**
 	 * Returns the line index of the type declaration's first line. The default
 	 * value is -1.
 	 *
@@ -135,6 +124,14 @@ public class JavaFile {
 		return typeName;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((file == null) ? 0 : file.hashCode());
+		return result;
+	}
+
 	/**
 	 * Sets the diff result.
 	 *
@@ -144,17 +141,6 @@ public class JavaFile {
 	 */
 	public void setDiffResult(DiffResult diffResult) {
 		this.diffResult = diffResult;
-	}
-
-	/**
-	 * Sets the tagging mode.
-	 *
-	 * @param taggingMode
-	 *            The new tagging mode.
-	 * @see AuthorTaggingMode
-	 */
-	public void setTaggingMode(AuthorTaggingMode taggingMode) {
-		this.taggingMode = taggingMode;
 	}
 
 	/**
@@ -181,7 +167,7 @@ public class JavaFile {
 
 	@Override
 	public String toString() {
-		return "JavaFile [taggingMode=" + taggingMode + ", typeName=" + typeName + ", typeDeclarationStartLine="
+		return "JavaFile [typeName=" + typeName + ", authors=" + authors + ", typeDeclarationStartLine="
 				+ typeDeclarationStartLine + "]";
 	}
 
