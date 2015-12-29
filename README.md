@@ -43,7 +43,6 @@ The algorithm is really simple, it assumes that your files are well-formatted:
 * the first type declaration in the file must be the public one
 * also the `public` must be at the beginning of the line
 * the algorithm does not check if the lines are in the proper block or outside of a multiline comment, it will pick the first line that matches the appropriate pattern
-* it does not handle `package-info.java` files
 
 
 
@@ -145,7 +144,7 @@ Remember, indenting and separating action char from parameter is really up to yo
 Further ideas
 -------------
 
-* handle `package-info.java` files (analyzer, writer)
+* handle `package-info.java` files (writer - need test)
 * smarter logging
 * smarter algorithm: filename contains type name -> so we can look for declaration with type name
 * it will be more useful as a Maven plugin

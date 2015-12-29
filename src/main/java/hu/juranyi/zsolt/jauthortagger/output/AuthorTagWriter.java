@@ -23,6 +23,7 @@ import static hu.juranyi.zsolt.jauthortagger.model.BackupMode.TEST;
 import static hu.juranyi.zsolt.jauthortagger.model.Filenames.backupFileOf;
 import static hu.juranyi.zsolt.jauthortagger.model.Filenames.tempFileOf;
 import static hu.juranyi.zsolt.jauthortagger.model.Filenames.testFileOf;
+import static hu.juranyi.zsolt.jauthortagger.model.JavaFilePatterns.AUTHOR_PATTERN;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,7 +37,6 @@ import org.slf4j.Logger;
 import hu.juranyi.zsolt.jauthortagger.input.JavaFileAnalyzer;
 import hu.juranyi.zsolt.jauthortagger.model.BackupMode;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
-import hu.juranyi.zsolt.jauthortagger.model.JavaFilePatterns;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
 
 /**
@@ -134,7 +134,7 @@ public class AuthorTagWriter {
 				boolean atJavadocStart = line.startsWith("/**");
 				boolean atJavadocEnd = javadocFound && line.trim().equals("*/");
 				boolean atTypeDeclaration = ln == javaFile.getTypeDeclarationStartLine();
-				boolean isAuthorLine = javadocFound && JavaFilePatterns.AUTHOR_PATTERN.matcher(line).find();
+				boolean isAuthorLine = javadocFound && AUTHOR_PATTERN.matcher(line).find();
 				boolean noJavadoc = atTypeDeclaration && !javadocFound;
 
 				if (atJavadocStart) {

@@ -1,0 +1,14 @@
+/*
+	Class + Annotations
+	typeDeclarationStartLine: 5
+*/
+
+@SomeAnnotation1
+@SomeAnnotation2
+public class ClassA implements Runnable {
+
+	@Override
+	public void run() {
+		// code
+	}
+}

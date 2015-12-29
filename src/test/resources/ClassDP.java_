@@ -1,0 +1,19 @@
+/*
+	Class + Doc + Package
+	typeDeclarationStartLine: 12
+*/
+
+package name.of.the.sample.package;
+
+/**
+ * @author Zsolt Jurányi
+ * @author Zsolt Jurányi
+ * @author Someone Else
+ */
+public class ClassDP implements Runnable {
+
+	@Override
+	public void run() {
+		// code
+	}
+}

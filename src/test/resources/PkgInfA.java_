@@ -1,0 +1,8 @@
+/*
+	Package info + Annotations
+	typeDeclarationStartLine: 5
+*/
+
+@SomeAnnotation1
+@SomeAnnotation2
+package name.of.the.sample.package; 

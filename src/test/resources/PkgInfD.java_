@@ -1,0 +1,11 @@
+/*
+	Package info + Doc
+	typeDeclarationStartLine: 10
+*/
+
+/**
+ * @author Zsolt Jurányi
+ * @author Zsolt Jurányi
+ * @author Someone Else
+ */
+package name.of.the.sample.package; 

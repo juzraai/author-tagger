@@ -81,7 +81,6 @@ public class JavaFileAnalyzer {
 	 */
 	public boolean analyzeJavaFile(JavaFile javaFile) {
 		boolean success = false;
-		// TODO handle root pkg classes -> no package declaration
 		// TODO handle package-info.java -> no type declaration
 
 		LOG.trace("Analyzing .java file: {}", javaFile.getFile().getAbsoluteFile());
@@ -89,6 +88,7 @@ public class JavaFileAnalyzer {
 		try {
 			s = new Scanner(javaFile.getFile(), "UTF-8");
 			int ln = -1;
+			int packageLine = -1, annotationLine = -1, typeLine = -1;
 			String packageName = "";
 			while (null == javaFile.getTypeName() && s.hasNextLine()) {
 				ln++;
@@ -101,6 +101,9 @@ public class JavaFileAnalyzer {
 
 				if (packageMatcher.find()) {
 					// package declaration
+					if (-1 == packageLine) {
+						packageLine = ln;
+					}
 					packageName = packageMatcher.group(1).trim() + ".";
 				} else if (authorMatcher.find()) {
 					// @author line
@@ -110,15 +113,33 @@ public class JavaFileAnalyzer {
 					}
 				} else if (annotationMatcher.find()) {
 					// @Annotation on the type
-					javaFile.setTypeDeclarationStartLine(ln);
+					if (-1 == annotationLine) {
+						annotationLine = ln;
+					}
 				} else if (typeMatcher.find()) {
 					// type declaration
-					if (-1 == javaFile.getTypeDeclarationStartLine()) {
-						javaFile.setTypeDeclarationStartLine(ln);
+					if (-1 == typeLine) {
+						typeLine = ln;
 					}
 					String typeName = typeMatcher.group("n");
 					javaFile.setTypeName(packageName + typeName);
 				}
+			}
+
+			if (-1 < annotationLine) {
+				// type w/ annotations or package-info with annotations
+				javaFile.setTypeDeclarationStartLine(annotationLine);
+			} else if (-1 < typeLine) {
+				// type w/o annotations
+				javaFile.setTypeDeclarationStartLine(typeLine);
+			} else if (-1 < packageLine) {
+				// package-info w/o annotation
+				javaFile.setTypeDeclarationStartLine(packageLine);
+			}
+
+			if (null == javaFile.getTypeName()) {
+				// package-info
+				javaFile.setTypeName(packageName + javaFile.getFile().getName().replaceAll("\\..*$", ""));
 			}
 
 			LOG.trace("{} ", javaFile);
