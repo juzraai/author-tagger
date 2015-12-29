@@ -42,6 +42,7 @@ public class JavaFile {
 	private final File file;
 	private String typeName;
 	private final List<String> authors = new ArrayList<String>();
+	// TODO use LinkedHashSet
 	private int typeDeclarationStartLine = -1;
 	private DiffResult diffResult;
 

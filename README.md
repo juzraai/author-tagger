@@ -84,7 +84,62 @@ If you used the default backup mode and you don't like the result, you can rever
 Configuration
 -------------
 
-(Coming soon...)
+* the configuration file is a simple text file which will be interpreted line by line, sequentially
+* it must be placed in the project directory with the name `.authors`
+* it must have UTF-8 encoding without BOM
+* configuration lines are those which match the pattern: `[any whitespace] ACTION [any whitespace] PARAMETER`
+* lines that not match the pattern will be skipped, so you can write simple text around configuration lines
+* whitespaces are optional, they will be thrown away when parsing
+* available actions:
+> * `$` (**$**elect)
+> * `@` (**@**uthor)
+> * `!` (special operation)
+> * `-` (deletion)
+> * `+` (addition)
+* `$` - Starts a new section. The parameter must be a class name filter (see `ClassNameFilter`'s doc). It selects your `.java` files, and the following operations (special, del, add) will be performed on them.
+* `@` - Starts a new section. The parameter must be an author name. The following operations (del, add) will affect this author.
+* `!` - There are only one special action, and this is `"skip"` (write without quotes). It can be used in `$` sections. The skip action tells <b>JAuthorTagger</b> to forget the selected classes, do not perform any operation on them.
+* `-` - Used in a `$` section, the parameter must be an author name filter (see `SimpleStringFilter`'s doc), and means that matching authors in the selected classes will be removed. Used in a `@` section, the parameter must be a class name filter, and means that the selected author will be removed from matching classes.
+* `+` - Used in a `$` section, the parameter must be an author name: it will be added to the selected classes. Used in a `@` section, the parameter must be a class name filter, and means that the given author will be added to matching classes.
+
+Sample configuration file:
+```
+Selecting my classes:
+$hu.juranyi.zsolt.**
+
+	Deleting any other author, because now I want to overwrite:
+	-*
+
+	And adding myself:
+	+Zsolt Jurányi
+```
+
+This is idenctical to the previous one:
+```
+$hu.juranyi.zsolt.**
+	-*
+
+@ Zsolt Jurányi
+	+hu.juranyi.zsolt.**
+```
+
+If you want to exclude classes from previous addition, you can do this (additional lines):
+```
+$org.other.thingies.**
+	-Zsolt Jurányi
+```
+
+Or if you want to skip classes:
+```
+$com.classes.to.skip.**
+	!skip
+
+Or just by classname:
+$VendorThing*
+	!skip
+```
+
+Remember, indenting and separating action char from parameter is really up to you, it isn't necessary for **JAuthorTagger**.
 
 
 
@@ -92,8 +147,8 @@ Further ideas
 -------------
 
 * handle `.java` files in the root package (analyzer)
+* handle `package-info.java` files (analyzer, writer)
 * smarter logging
 * smarter algorithm: filename contains type name -> so we can look for declaration with type name
-* manage `package-info.java` files too
 * it will be more useful as a Maven plugin
 * and/or as an Eclipse plugin with a nice GUI
