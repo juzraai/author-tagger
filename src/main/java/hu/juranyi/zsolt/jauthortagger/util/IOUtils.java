@@ -32,9 +32,9 @@ public class IOUtils {
 	/**
 	 * Reads an UTF-8 encoded text file and returns its lines as list of
 	 * <code>String</code> objects.
-	 * 
+	 *
 	 * @param f
-	 *            The file to read.
+	 *            - The file to read.
 	 * @return The list of lines.
 	 */
 	public static List<String> fileToStringList(File f) {

@@ -67,11 +67,11 @@ public class DiffReportWriter {
 	 * Creates an instance.
 	 *
 	 * @param projectDir
-	 *            The project directory.
+	 *            - The project directory.
 	 * @param backupMode
-	 *            The backup mode.
+	 *            - The backup mode.
 	 * @param javaFiles
-	 *            The <code>JavaFile</code> objects with calculated diffs
+	 *            - The <code>JavaFile</code> objects with calculated diffs
 	 *            inside.
 	 * @see BackupMode
 	 * @see DiffCalculator
@@ -115,7 +115,7 @@ public class DiffReportWriter {
 	 * putting in all fields an the timestamp, then kindly asks <i>Velocity</i>
 	 * to merge the template with the values and spit out the HTML file into the
 	 * project directory.
-	 * 
+	 *
 	 * @see Filenames#diffReportOf(File)
 	 */
 	public void writeDiffReport() {

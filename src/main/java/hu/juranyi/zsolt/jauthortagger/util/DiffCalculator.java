@@ -46,13 +46,13 @@ public class DiffCalculator {
 	 * Creates an instance.
 	 *
 	 * @param originalFile
-	 *            The original file's name to use in the unified diff.
+	 *            - The original file's name to use in the unified diff.
 	 * @param modifiedFile
-	 *            The modified file's name to use in the unified diff.
+	 *            - The modified file's name to use in the unified diff.
 	 * @param originalContent
-	 *            Lines of the original content.
+	 *            - Lines of the original content.
 	 * @param modifiedContent
-	 *            Lines of the modified content.
+	 *            - Lines of the modified content.
 	 */
 	public DiffCalculator(File originalFile, File modifiedFile, List<String> originalContent,
 			List<String> modifiedContent) {

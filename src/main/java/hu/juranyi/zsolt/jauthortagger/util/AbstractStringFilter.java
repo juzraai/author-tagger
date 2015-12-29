@@ -88,7 +88,7 @@ public abstract class AbstractStringFilter {
 	}
 
 	@Override
-	public String toString() { // TODO pattern toString? what it prints?
+	public String toString() {
 		return "AbstractStringFilter [filter=" + filter + ", pattern=" + pattern + "]";
 	}
 

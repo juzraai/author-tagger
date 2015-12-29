@@ -86,7 +86,7 @@ public class Filenames {
 	 * directory.
 	 *
 	 * @param projectDir
-	 *            The project directory.
+	 *            - The project directory.
 	 * @return A new <code>File</code> object that points to the configuration
 	 *         file of the given project directory.
 	 * @see #PROJECT_CONFIG_FILE
@@ -102,7 +102,7 @@ public class Filenames {
 	 * directory.
 	 *
 	 * @param projectDir
-	 *            The project directory.
+	 *            - The project directory.
 	 * @return A new <code>File</code> object that points to the diff report
 	 *         file of the given project directory.
 	 * @see #DIFF_REPORT_FILE
@@ -118,7 +118,7 @@ public class Filenames {
 	 * directory.
 	 *
 	 * @param projectDir
-	 *            The project directory.
+	 *            - The project directory.
 	 * @return A new <code>File</code> object that points to the log file of the
 	 *         given project directory.
 	 * @see #PROJECT_LOG_FILE
@@ -134,7 +134,7 @@ public class Filenames {
 	 * extension.
 	 *
 	 * @param javaFile
-	 *            The <code>File</code> you want to use as base for the
+	 *            - The <code>File</code> you want to use as base for the
 	 *            temporary file.
 	 * @return A new <code>File</code> object that points to the temporary file
 	 *         used for the given file.
@@ -150,7 +150,7 @@ public class Filenames {
 	 * the given path as an additional file extension.
 	 *
 	 * @param javaFile
-	 *            The <code>File</code> you want to use as base for the test
+	 *            - The <code>File</code> you want to use as base for the test
 	 *            file.
 	 * @return A new <code>File</code> object that points to the test file used
 	 *         for the given file.

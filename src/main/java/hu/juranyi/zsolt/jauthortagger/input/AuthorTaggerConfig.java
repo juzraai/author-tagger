@@ -26,18 +26,59 @@ import org.slf4j.Logger;
 
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
 import hu.juranyi.zsolt.jauthortagger.model.JavaFiles;
+import hu.juranyi.zsolt.jauthortagger.util.ClassNameFilter;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
+import hu.juranyi.zsolt.jauthortagger.util.SimpleStringFilter;
 
 /**
+ * <p>
  * Class for loading, interpreting and applying project configuration on
  * <code>JavaFiles</code> objects. The project configuration file is a simple
- * text file which will be interpreted line by line, sequentially.
+ * text file which will be interpreted line by line, sequentially:
+ * </p>
+ * <ul>
+ * <li>configuration lines are those which match the pattern:
+ * <code>[any whitespace] ACTION [any whitespace] PARAMETER</code></li>
+ * <li>lines that not match the pattern will be skipped, so you can write simple
+ * text around configuration lines</li>
+ * <li>whitespaces are optional, they will be thrown away when parsing</li>
+ * <li>available actions:
+ * <ul>
+ * <li><code>$</code> (<u>$</u>elect)</li>
+ * <li><code>@</code> ( <u>@uthor</u>)</li>
+ * <li><code>!</code> (special operation)</li>
+ * <li><code>-</code> (deletion)</li>
+ * <li><code>+</code> (addition)</li>
+ * </ul>
+ * </li>
+ * <li><code>$</code> - Starts a new section. The parameter must be a class name
+ * filter (see <code>ClassNameFilter</code>'s doc). It selects your
+ * <code>.java</code> files, and the following operations (special, del, add)
+ * will be performed on them.</li>
+ * <li><code>@</code> - Starts a new section. The parameter must be an author
+ * name. The following operations (del, add) will affect this author.</li>
+ * <li><code>!</code> - There are only one special action, and this is
+ * <code>"skip"</code> (write without quotes). It can be used in <code>$</code>
+ * sections. The skip action tells <b>JAuthorTagger</b> to forget the selected
+ * classes, do not perform any operation on them.</li>
+ * <li><code>-</code> - Used in a <code>$</code> section, the parameter must be
+ * an author name filter (see <code>SimpleStringFilter</code>'s doc), and means
+ * that matching authors in the selected classes will be removed. Used in a
+ * <code>@</code> section, the parameter must be a class name filter, and means
+ * that the selected author will be removed from matching classes.</li>
+ * <li><code>+</code> - Used in a <code>$</code> section, the parameter must be
+ * an author name: it will be added to the selected classes. Used in a
+ * <code>@</code> section, the parameter must be a class name filter, and means
+ * that the given author will be added to matching classes.</li>
+ * </ul>
  *
  * @author Zsolt Jurányi
  * @see JavaFiles
+ * @see ClassNameFilter
+ * @see SimpleStringFilter
  *
  */
-public class AuthorTaggerConfig { // TODO DOC: config file format...
+public class AuthorTaggerConfig {
 
 	private static final Logger LOG = Log.forClass(AuthorTaggerConfig.class);
 	private static final Pattern CONF_LINE_PATTERN = Pattern.compile("^\\s*(?<a>[$@!-+])\\s*(?<p>.*)\\s*$");
@@ -47,8 +88,8 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 	 * Creates an instance.
 	 *
 	 * @param configFile
-	 *            A <code>File</code> object pointing to a project configuration
-	 *            file e.g. "path/to/project/.authors".
+	 *            - A <code>File</code> object pointing to a project
+	 *            configuration file e.g. "path/to/project/.authors".
 	 */
 	public AuthorTaggerConfig(File configFile) {
 		this.configFile = configFile;
@@ -73,7 +114,7 @@ public class AuthorTaggerConfig { // TODO DOC: config file format...
 	 * won't reach the tagging procedure.
 	 *
 	 * @param javaFiles
-	 *            A <code>JavaFiles</code> to work on.
+	 *            - A <code>JavaFiles</code> to work on.
 	 * @see JavaFile
 	 * @see JavaFiles
 	 */

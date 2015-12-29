@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
  *
  */
 public class SimpleStringFilter extends AbstractStringFilter {
-	// TODO test
 
 	/**
 	 * Creates an instance using a readable filter which will be converted into

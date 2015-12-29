@@ -49,7 +49,7 @@ public class JavaFile {
 	 * Creates an instance.
 	 *
 	 * @param file
-	 *            A <code>File</code> object pointing to a <code>.java</code>
+	 *            - A <code>File</code> object pointing to a <code>.java</code>
 	 *            file.
 	 */
 	public JavaFile(File file) {
@@ -136,7 +136,7 @@ public class JavaFile {
 	 * Sets the diff result.
 	 *
 	 * @param diffResult
-	 *            The diff result.
+	 *            - The diff result.
 	 * @see DiffResult
 	 */
 	public void setDiffResult(DiffResult diffResult) {
@@ -147,7 +147,7 @@ public class JavaFile {
 	 * Sets the line index of the type declaration's first line.
 	 *
 	 * @param typeDeclarationStartLine
-	 *            The line index of the type declaration's first line.
+	 *            - The line index of the type declaration's first line.
 	 */
 	public void setTypeDeclarationStartLine(int typeDeclarationStartLine) {
 		this.typeDeclarationStartLine = typeDeclarationStartLine;
@@ -158,7 +158,7 @@ public class JavaFile {
 	 * file.
 	 *
 	 * @param typeName
-	 *            The full name of the public type declared in the
+	 *            - The full name of the public type declared in the
 	 *            <code>.java</code> file.
 	 */
 	public void setTypeName(String typeName) {

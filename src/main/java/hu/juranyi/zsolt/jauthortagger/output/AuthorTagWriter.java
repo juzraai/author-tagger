@@ -57,7 +57,7 @@ public class AuthorTagWriter {
 	 * Creates an instance.
 	 *
 	 * @param backupMode
-	 *            The <code>BackupMode</code> object.
+	 *            - The <code>BackupMode</code> object.
 	 * @see BackupMode
 	 */
 	public AuthorTagWriter(BackupMode backupMode) {
@@ -78,6 +78,7 @@ public class AuthorTagWriter {
 	 * mode.
 	 *
 	 * @param javaFile
+	 *            - The <code>JavaFile</code> to process.
 	 * @see BackupMode
 	 * @see JavaFile
 	 * @see JavaFileAnalyzer#analyzeJavaFile(JavaFile)

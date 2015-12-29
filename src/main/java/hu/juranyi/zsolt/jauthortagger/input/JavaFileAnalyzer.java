@@ -70,7 +70,7 @@ public class JavaFileAnalyzer {
 	 * </ul>
 	 *
 	 * @param javaFile
-	 *            The <code>JavaFile</code> object to be analyzed.
+	 *            - The <code>JavaFile</code> object to be analyzed.
 	 * @return <code>true</code> if analyzation succeded, <code>false</code> if
 	 *         there were any errors.
 	 * @see JavaFile
@@ -137,7 +137,7 @@ public class JavaFileAnalyzer {
 	 * <code>analyzeJavaFiles</code> method on them.
 	 *
 	 * @param javaFiles
-	 *            The <code>JavaFile</code> objects to be analyzed.
+	 *            - The <code>JavaFile</code> objects to be analyzed.
 	 * @see #analyzeJavaFile(JavaFile)
 	 * @see JavaFile
 	 */

@@ -55,7 +55,7 @@ public class JavaFileEnumerator {
 	 * </p>
 	 *
 	 * @param dir
-	 *            The directory to be searched for <code>.java</code> files.
+	 *            - The directory to be searched for <code>.java</code> files.
 	 * @return The found <code>.java</code> files as a <code>JavaFiles</code>
 	 *         object.
 	 * @see #enumerateJavaFilesImpl(File)

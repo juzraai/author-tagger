@@ -51,7 +51,6 @@ import hu.juranyi.zsolt.jauthortagger.util.Log;
  */
 public class JAuthorTagger {
 
-	// TODO DOC: "-" before param descriptions
 	// TODO JUnit tests to verify main functionality
 
 	static {
@@ -71,7 +70,7 @@ public class JAuthorTagger {
 	 * the second optional argument can override the default backup mode.
 	 *
 	 * @param args
-	 *            Command line arguments.
+	 *            - Command line arguments.
 	 * @see BackupMode
 	 * @see #start()
 	 */
@@ -127,7 +126,7 @@ public class JAuthorTagger {
 	 * Creates an instance.
 	 *
 	 * @param projectDir
-	 *            The directory of the project to work on.
+	 *            - The directory of the project to work on.
 	 */
 	public JAuthorTagger(File projectDir) {
 		this(projectDir, DEFAULT_BACKUPING_MODE);
@@ -137,9 +136,9 @@ public class JAuthorTagger {
 	 * Creates an instance.
 	 *
 	 * @param projectDir
-	 *            The directory of the project to work on.
+	 *            - The directory of the project to work on.
 	 * @param backupMode
-	 *            The backup mode.
+	 *            - The backup mode.
 	 * @see BackupMode
 	 */
 	public JAuthorTagger(File projectDir, BackupMode backupMode) {

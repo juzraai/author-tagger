@@ -21,10 +21,11 @@ import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
+import hu.juranyi.zsolt.jauthortagger.util.AbstractStringFilter;
 import hu.juranyi.zsolt.jauthortagger.util.ClassNameFilter;
 
 /**
- * Test <code>ClassNameFilter</code> class' main functionality: the filter to
+ * Tests <code>ClassNameFilter</code> class' main functionality: the filter to
  * regex conversion.
  *
  * @author Zsolt Jurányi
@@ -34,7 +35,7 @@ public class ClassNameFilterTest {
 
 	@Test
 	public void fullNameFilterToRegex() {
-		ClassNameFilter filter = new ClassNameFilter("Cla??Name*");
+		AbstractStringFilter filter = new ClassNameFilter("Cla??Name*");
 		String expectedRegex = "(.*\\.)?Cla[^.][^.]Name[^.]*$";
 		String generatedRegex = filter.getPattern().pattern();
 		assertEquals(expectedRegex, generatedRegex);
@@ -47,7 +48,7 @@ public class ClassNameFilterTest {
 
 	@Test
 	public void regexFilterToRegex() {
-		ClassNameFilter filter = new ClassNameFilter("/Will this remain a regular expression?/");
+		AbstractStringFilter filter = new ClassNameFilter("/Will this remain a regular expression?/");
 		String expectedRegex = "Will this remain a regular expression?";
 		String generatedRegex = filter.getPattern().pattern();
 		assertEquals(expectedRegex, generatedRegex);
@@ -55,7 +56,7 @@ public class ClassNameFilterTest {
 
 	@Test
 	public void shortNameFilterToRegex() {
-		ClassNameFilter filter = new ClassNameFilter("package*.name?.**ClassName");
+		AbstractStringFilter filter = new ClassNameFilter("package*.name?.**ClassName");
 		String expectedRegex = "^package[^.]*\\.name[^.]\\..*ClassName$";
 		String generatedRegex = filter.getPattern().pattern();
 		assertEquals(expectedRegex, generatedRegex);

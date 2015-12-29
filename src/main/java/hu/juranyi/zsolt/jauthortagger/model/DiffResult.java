@@ -37,9 +37,9 @@ public class DiffResult {
 	 * Creates an instance.
 	 *
 	 * @param patch
-	 *            A <code>difflib.Patch</code> object which stores deltas.
+	 *            - A <code>difflib.Patch</code> object which stores deltas.
 	 * @param unifiedDiff
-	 *            Lines of a unified diff generated from the patch.
+	 *            - Lines of a unified diff generated from the patch.
 	 */
 	public DiffResult(Patch<String> patch, List<String> unifiedDiff) {
 		this.patch = patch;
