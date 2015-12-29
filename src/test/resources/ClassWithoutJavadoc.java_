@@ -1,0 +1,17 @@
+/*
+	Some header.
+*/
+package name.of.the.sample.package;
+
+/*
+	Other things.
+*/
+
+@SomeAnnotation // typeDeclarationStartLine must be: 9
+public class ClassWithoutJavadoc implements Runnable { // typeName must be: "name.of.the.sample.package.ClassWithoutJavadoc"
+
+	@Override
+	public void run() {
+		// code
+	}
+}

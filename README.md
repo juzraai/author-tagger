@@ -44,7 +44,6 @@ The algorithm is really simple, it assumes that your files are well-formatted:
 * also the `public` must be at the beginning of the line
 * the algorithm does not check if the lines are in the proper block or outside of a multiline comment, it will pick the first line that matches the appropriate pattern
 * it does not handle `package-info.java` files
-* it does not handle `.java` files in the root package
 
 
 
@@ -146,7 +145,6 @@ Remember, indenting and separating action char from parameter is really up to yo
 Further ideas
 -------------
 
-* handle `.java` files in the root package (analyzer)
 * handle `package-info.java` files (analyzer, writer)
 * smarter logging
 * smarter algorithm: filename contains type name -> so we can look for declaration with type name

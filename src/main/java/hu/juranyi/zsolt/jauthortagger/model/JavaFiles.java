@@ -84,7 +84,9 @@ public class JavaFiles extends ArrayList<JavaFile> {
 		for (JavaFile javaFile : this) {
 			if (filter.accept(javaFile.getTypeName())) {
 				LOG.trace("{} >> {}", author, javaFile.getTypeName());
-				javaFile.getAuthors().add(author);
+				if (!javaFile.getAuthors().contains(author)) {
+					javaFile.getAuthors().add(author);
+				}
 			}
 		}
 	}

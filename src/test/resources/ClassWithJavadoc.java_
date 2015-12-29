@@ -1,0 +1,23 @@
+/*
+	Some header.
+*/
+package name.of.the.sample.package;
+
+/*
+	Other things.
+*/
+
+/**
+ * @author Zsolt Jurányi
+ * @author Zsolt Jurányi
+ * @author Someone Else
+ */
+// authors must be: [ "Zsolt Jurányi", "Someone Else" ]
+@SomeAnnotation // typeDeclarationStartLine must be: 15
+public class ClassWithJavadoc implements Runnable { // typeName must be: "name.of.the.sample.package.ClassWithJavadoc"
+
+	@Override
+	public void run() {
+		// code
+	}
+}

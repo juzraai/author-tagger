@@ -16,6 +16,11 @@
 
 package hu.juranyi.zsolt.jauthortagger.input;
 
+import static hu.juranyi.zsolt.jauthortagger.model.JavaFilePatterns.ANNOTATION_PATTERN;
+import static hu.juranyi.zsolt.jauthortagger.model.JavaFilePatterns.AUTHOR_PATTERN;
+import static hu.juranyi.zsolt.jauthortagger.model.JavaFilePatterns.PACKAGE_PATTERN;
+import static hu.juranyi.zsolt.jauthortagger.model.JavaFilePatterns.TYPE_DECLARATION_PATTERN;
+
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
@@ -24,7 +29,6 @@ import java.util.regex.Matcher;
 import org.slf4j.Logger;
 
 import hu.juranyi.zsolt.jauthortagger.model.JavaFile;
-import hu.juranyi.zsolt.jauthortagger.model.JavaFilePatterns;
 import hu.juranyi.zsolt.jauthortagger.util.Log;
 
 /**
@@ -85,38 +89,35 @@ public class JavaFileAnalyzer {
 		try {
 			s = new Scanner(javaFile.getFile(), "UTF-8");
 			int ln = -1;
-			String packageName = null;
-
-			// find package name
-			while (null == packageName && s.hasNextLine()) {
-				ln++;
-				String line = s.nextLine();
-				Matcher m = JavaFilePatterns.PACKAGE_PATTERN.matcher(line);
-				if (m.find()) {
-					packageName = m.group(1).trim();
-				}
-			}
-
-			// find old authors and type declaration
+			String packageName = "";
 			while (null == javaFile.getTypeName() && s.hasNextLine()) {
 				ln++;
 				String line = s.nextLine();
 
-				Matcher authorMatcher = JavaFilePatterns.AUTHOR_PATTERN.matcher(line);
-				Matcher annotationMatcher = JavaFilePatterns.ANNOTATION_PATTERN.matcher(line);
-				Matcher typeMatcher = JavaFilePatterns.TYPE_DECLARATION_PATTERN.matcher(line);
+				Matcher packageMatcher = PACKAGE_PATTERN.matcher(line);
+				Matcher authorMatcher = AUTHOR_PATTERN.matcher(line);
+				Matcher annotationMatcher = ANNOTATION_PATTERN.matcher(line);
+				Matcher typeMatcher = TYPE_DECLARATION_PATTERN.matcher(line);
 
-				if (authorMatcher.find()) {
+				if (packageMatcher.find()) {
+					// package declaration
+					packageName = packageMatcher.group(1).trim() + ".";
+				} else if (authorMatcher.find()) {
+					// @author line
 					String author = authorMatcher.group(1).trim();
-					javaFile.getAuthors().add(author);
+					if (!javaFile.getAuthors().contains(author)) {
+						javaFile.getAuthors().add(author);
+					}
 				} else if (annotationMatcher.find()) {
+					// @Annotation on the type
 					javaFile.setTypeDeclarationStartLine(ln);
 				} else if (typeMatcher.find()) {
+					// type declaration
 					if (-1 == javaFile.getTypeDeclarationStartLine()) {
 						javaFile.setTypeDeclarationStartLine(ln);
 					}
 					String typeName = typeMatcher.group("n");
-					javaFile.setTypeName(packageName + "." + typeName);
+					javaFile.setTypeName(packageName + typeName);
 				}
 			}
 
