@@ -121,13 +121,7 @@ $hu.juranyi.zsolt.**
 	+hu.juranyi.zsolt.**
 ```
 
-If you want to exclude classes from previous addition, you can do this (additional lines):
-```
-$org.other.thingies.**
-	-Zsolt Jurányi
-```
-
-Or if you want to skip classes:
+If you want to skip classes from the whole procedure:
 ```
 $com.classes.to.skip.**
 	!skip

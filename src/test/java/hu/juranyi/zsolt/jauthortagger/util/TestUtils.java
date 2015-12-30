@@ -18,6 +18,7 @@ package hu.juranyi.zsolt.jauthortagger.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,13 +28,36 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * Utility methods to be used in JUnit test cases.
- * 
+ *
  * @author Zsolt Jurányi
  *
  */
 public class TestUtils {
 
-	private static final File TEST_DIR = new File("test-files");
+	public static final File TEST_DIR = new File("test-files");
+
+	public static File createEmptyFile(String fn) {
+		File outFile = new File(TEST_DIR, fn);
+		FileWriter w = null;
+		try {
+			File parent = outFile.getParentFile();
+			if (null != parent && !parent.exists()) {
+				parent.mkdirs();
+			}
+			w = new FileWriter(outFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (null != w) {
+				try {
+					w.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return outFile;
+	}
 
 	public static void deleteTestDir() {
 		try {
