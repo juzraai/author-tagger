@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import hu.juranyi.zsolt.jauthortagger.input.JavaFileAnalyzer;
@@ -40,6 +41,7 @@ public class JavaFileAnalyzerTest {
 
 	// XXX would be nice to generate test files with Velocity ;)
 
+	@BeforeClass
 	@AfterClass
 	public static void cleanup() {
 		TestUtils.deleteTestDir();

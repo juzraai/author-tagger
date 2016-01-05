@@ -76,7 +76,7 @@ public class TestUtils {
 			if (null != parent && !parent.exists()) {
 				parent.mkdirs();
 			}
-			is = TestUtils.class.getClassLoader().getResourceAsStream(resFn);
+			is = resource(resFn);
 			os = new FileOutputStream(outFile);
 			IOUtils.copy(is, os);
 		} catch (Exception e) {
@@ -98,6 +98,10 @@ public class TestUtils {
 			}
 		}
 		return outFile;
+	}
+
+	public static InputStream resource(String name) {
+		return TestUtils.class.getClassLoader().getResourceAsStream(name);
 	}
 
 }

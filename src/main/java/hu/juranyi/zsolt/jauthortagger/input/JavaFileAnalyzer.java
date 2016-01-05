@@ -81,7 +81,6 @@ public class JavaFileAnalyzer {
 	 */
 	public boolean analyzeJavaFile(JavaFile javaFile) {
 		boolean success = false;
-		// TODO handle package-info.java -> no type declaration
 
 		LOG.trace("Analyzing .java file: {}", javaFile.getFile().getAbsoluteFile());
 		Scanner s = null;

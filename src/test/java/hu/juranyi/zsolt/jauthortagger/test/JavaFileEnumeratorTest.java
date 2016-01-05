@@ -22,6 +22,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import hu.juranyi.zsolt.jauthortagger.input.JavaFileEnumerator;
@@ -31,11 +33,17 @@ import hu.juranyi.zsolt.jauthortagger.util.TestUtils;
 
 /**
  * Verifies whether the enumerator finds only the right files.
- * 
+ *
  * @author Zsolt Jurányi
  *
  */
 public class JavaFileEnumeratorTest {
+
+	@BeforeClass
+	@AfterClass
+	public static void cleanup() {
+		TestUtils.deleteTestDir();
+	}
 
 	@Test
 	public void enumeratesTheRightFiles() {
@@ -53,7 +61,6 @@ public class JavaFileEnumeratorTest {
 		}
 
 		assertEquals(expectedFiles, enumeratedFiles);
-		TestUtils.deleteTestDir();
 	}
 
 }
