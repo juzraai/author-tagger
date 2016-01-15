@@ -1,0 +1,19 @@
+/*
+	Class + Annotations + Doc
+	typeDeclarationStartLine: 10
+*/
+
+/**
+ * @author Zsolt Jurányi
+ * @author Zsolt Jurányi
+ * @author Someone Else
+ */
+@SomeAnnotation1
+@SomeAnnotation2
+public class ClassAD implements Runnable {
+
+	@Override
+	public void run() {
+		// code
+	}
+}

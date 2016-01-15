@@ -1,0 +1,21 @@
+/*
+	Class + Annotations + Doc + Package
+	typeDeclarationStartLine: 12
+*/
+
+package name.of.the.sample.package;
+
+/**
+ * @author Zsolt Jurányi
+ * @author Zsolt Jurányi
+ * @author Someone Else
+ */
+@SomeAnnotation1
+@SomeAnnotation2
+public class ClassADP implements Runnable {
+
+	@Override
+	public void run() {
+		// code
+	}
+}

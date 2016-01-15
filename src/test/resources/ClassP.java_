@@ -1,0 +1,14 @@
+/*
+	Class + Package
+	typeDeclarationStartLine: 7
+*/
+
+package name.of.the.sample.package;
+
+public class ClassP implements Runnable {
+
+	@Override
+	public void run() {
+		// code
+	}
+}

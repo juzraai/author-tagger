@@ -1,0 +1,17 @@
+/*
+	Class + Doc
+	typeDeclarationStartLine: 10
+*/
+
+/**
+ * @author Zsolt Jurányi
+ * @author Zsolt Jurányi
+ * @author Someone Else
+ */
+public class ClassD implements Runnable {
+
+	@Override
+	public void run() {
+		// code
+	}
+}

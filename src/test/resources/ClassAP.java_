@@ -1,0 +1,16 @@
+/*
+	Class + Annotations + Package
+	typeDeclarationStartLine: 7
+*/
+
+package name.of.the.sample.package;
+
+@SomeAnnotation1
+@SomeAnnotation2
+public class ClassAP implements Runnable {
+
+	@Override
+	public void run() {
+		// code
+	}
+}
