@@ -1,4 +1,4 @@
-JAuthorTagger <img src="https://img.shields.io/badge/version-1.1.0--SNAPSHOT-blue.svg"/> <img alt="Build Status Images" src="https://travis-ci.org/juzraai/author-tagger.svg">
+JAuthorTagger <img src="https://img.shields.io/badge/version-1.1.0-blue.svg"/> <img alt="Build Status Images" src="https://travis-ci.org/juzraai/author-tagger.svg">
 =============
 
 **Re-edit your javadoc @author tags at project level! ;)**
@@ -51,7 +51,7 @@ Usage
 -----
 
 1. Install JRE 1.7+
-2. Get the jar: (comes soon to GitHub! :))
+2. [Get the JAR](https://github.com/juzraai/author-tagger/releases)
 3. Write a configuration file (see below) for your project named `path/2/ur/project/.authors`
 4. Run the thingy: `java -jar author-tagger.jar path/2/ur/project`
 

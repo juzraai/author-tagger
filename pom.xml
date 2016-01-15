@@ -4,11 +4,12 @@
 
 	<groupId>hu.juranyi.zsolt</groupId>
 	<artifactId>author-tagger</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<packaging>jar</packaging>
 
 	<name>author-tagger</name>
-
+	<url>https://github.com/juzraai/author-tagger</url>
+	
 	<developers>
 		<developer>
 			<id>juzraai</id>
