@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+	<meta charset="utf-8"> 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.6/simplex/bootstrap.min.css" />
 	<title>JAuthorTagger Diff Report</title>
 	<style type="text/css">

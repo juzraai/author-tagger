@@ -81,7 +81,7 @@ import hu.juranyi.zsolt.jauthortagger.util.SimpleStringFilter;
 public class AuthorTaggerConfig {
 
 	private static final Logger LOG = Log.forClass(AuthorTaggerConfig.class);
-	private static final Pattern CONF_LINE_PATTERN = Pattern.compile("^\\s*(?<a>[$@!-+])\\s*(?<p>.*)\\s*$");
+	private static final Pattern CONF_LINE_PATTERN = Pattern.compile("^\\s*(?<a>[$@!\\-+])\\s*(?<p>.*)\\s*$");
 	private final File configFile;
 
 	/**
@@ -158,10 +158,10 @@ public class AuthorTaggerConfig {
 						// deletion
 						if (null != classFilter) {
 							LOG.trace("{} << {}", param, classFilter);
-							javaFiles.addAuthor(classFilter, param);
+							javaFiles.delAuthor(classFilter, param);
 						} else if (null != author) {
 							LOG.trace("{} << {}", author, param);
-							javaFiles.addAuthor(param, author);
+							javaFiles.delAuthor(param, author);
 						}
 					}
 				} // conf line
