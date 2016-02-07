@@ -20,8 +20,11 @@ import static hu.juranyi.zsolt.jauthortagger.model.Filenames.DIFF_REPORT_TEMPLAT
 import static hu.juranyi.zsolt.jauthortagger.model.Filenames.diffReportOf;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -127,21 +130,11 @@ public class DiffReportWriter {
 		vc.put("backupMode", backupMode);
 		vc.put("javaFiles", javaFiles);
 
-		FileWriter w = null;
-		try {
-			w = new FileWriter(outputFile);
+		try (Writer w = new OutputStreamWriter(new FileOutputStream(outputFile), Charset.forName("UTF-8"))) {
 			Velocity.mergeTemplate(DIFF_REPORT_TEMPLATE, "UTF-8", vc, w);
+			LOG.info("Report generated into file: {}", outputFile.getAbsolutePath());
 		} catch (IOException e) {
 			LOG.error("Error when writing diff report", e);
-		} finally {
-			if (null != w) {
-				try {
-					w.close();
-					LOG.info("Report generated into file: {}", outputFile.getAbsolutePath());
-				} catch (IOException e) {
-					LOG.error("Error when closing diff report", e);
-				}
-			}
 		}
 	}
 
